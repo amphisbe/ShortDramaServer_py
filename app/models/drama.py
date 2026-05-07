@@ -1,0 +1,156 @@
+from datetime import datetime
+
+from peewee import (
+    BigAutoField,
+    BigIntegerField,
+    BooleanField,
+    CharField,
+    DateTimeField,
+    ForeignKeyField,
+    IntegerField,
+    Model,
+    TextField,
+)
+
+from app.db.database import database_proxy
+
+
+class BaseModel(Model):
+    class Meta:
+        database = database_proxy
+
+
+class TimestampMixin:
+    created_at = DateTimeField(default=datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.utcnow)
+
+    def save(self, *args, **kwargs):
+        self.updated_at = datetime.utcnow()
+        return super().save(*args, **kwargs)
+
+
+class User(BaseModel, TimestampMixin):
+    id = BigAutoField()
+    external_user_id = CharField(max_length=24, unique=True, index=True)
+    nickname = CharField(max_length=100, default="")
+    avatar_url = CharField(max_length=1024, default="")
+    status = IntegerField(default=1, index=True)
+
+    class Meta:
+        table_name = "users"
+
+
+class Drama(BaseModel, TimestampMixin):
+    id = BigAutoField()
+    external_drama_id = CharField(max_length=24, null=True, unique=True)
+    title = CharField(max_length=255, default="")
+    display_author_name = CharField(max_length=100, default="")
+    author_user = ForeignKeyField(User, backref="dramas", column_name="author_user_id")
+    total_episodes = IntegerField(default=0)
+    cover_url = CharField(max_length=1024, default="")
+    vip_free = BooleanField(default=True)
+    status = IntegerField(default=1, index=True)
+
+    class Meta:
+        table_name = "dramas"
+
+
+class DramaEpisode(BaseModel, TimestampMixin):
+    id = BigAutoField()
+    drama = ForeignKeyField(Drama, backref="episodes", column_name="drama_id")
+    external_video_id = CharField(max_length=24, unique=True, index=True)
+    episode_no = IntegerField()
+    title = CharField(max_length=500, default="")
+    play_url = CharField(max_length=1024)
+    poster_url = CharField(max_length=1024, default="")
+    duration_seconds = IntegerField(default=0)
+    sort_order = IntegerField(default=0, index=True)
+    status = IntegerField(default=1, index=True)
+
+    class Meta:
+        table_name = "drama_episodes"
+        indexes = ((('drama', 'episode_no'), True),)
+
+
+class DramaEpisodeStat(BaseModel):
+    episode = ForeignKeyField(DramaEpisode, primary_key=True, backref="stat", column_name="episode_id")
+    like_count = IntegerField(default=0)
+    comment_count = IntegerField(default=0)
+    share_count = IntegerField(default=0)
+    play_count = BigIntegerField(default=0)
+    favorite_count = IntegerField(default=0)
+    updated_at = DateTimeField(default=datetime.utcnow)
+
+    def save(self, *args, **kwargs):
+        self.updated_at = datetime.utcnow()
+        return super().save(*args, **kwargs)
+
+    class Meta:
+        table_name = "drama_episode_stats"
+
+
+class UserFollow(BaseModel):
+    id = BigAutoField()
+    follower_user = ForeignKeyField(User, backref="following", column_name="follower_user_id")
+    followed_user = ForeignKeyField(User, backref="followers", column_name="followed_user_id")
+    created_at = DateTimeField(default=datetime.utcnow)
+
+    class Meta:
+        table_name = "user_follows"
+        indexes = ((('follower_user', 'followed_user'), True),)
+
+
+class UserEpisodeLike(BaseModel):
+    id = BigAutoField()
+    user = ForeignKeyField(User, backref="episode_likes", column_name="user_id")
+    episode = ForeignKeyField(DramaEpisode, backref="user_likes", column_name="episode_id")
+    created_at = DateTimeField(default=datetime.utcnow)
+
+    class Meta:
+        table_name = "user_episode_likes"
+        indexes = ((('user', 'episode'), True),)
+
+
+class UserDramaFavorite(BaseModel):
+    id = BigAutoField()
+    user = ForeignKeyField(User, backref="drama_favorites", column_name="user_id")
+    drama = ForeignKeyField(Drama, backref="user_favorites", column_name="drama_id")
+    created_at = DateTimeField(default=datetime.utcnow)
+
+    class Meta:
+        table_name = "user_drama_favorites"
+        indexes = ((('user', 'drama'), True),)
+
+
+class UserEpisodeProgress(BaseModel, TimestampMixin):
+    id = BigAutoField()
+    user = ForeignKeyField(User, backref="episode_progress", column_name="user_id")
+    episode = ForeignKeyField(DramaEpisode, backref="user_progress", column_name="episode_id")
+    position_seconds = IntegerField(default=0)
+    is_finished = BooleanField(default=False)
+
+    class Meta:
+        table_name = "user_episode_progress"
+        indexes = ((('user', 'episode'), True),)
+
+
+class EpisodeComment(BaseModel, TimestampMixin):
+    id = BigAutoField()
+    episode = ForeignKeyField(DramaEpisode, backref="comments", column_name="episode_id")
+    user = ForeignKeyField(User, backref="comments", column_name="user_id")
+    content = TextField()
+    status = IntegerField(default=1, index=True)
+
+    class Meta:
+        table_name = "episode_comments"
+
+
+class EpisodeShare(BaseModel):
+    id = BigAutoField()
+    episode = ForeignKeyField(DramaEpisode, backref="shares", column_name="episode_id")
+    user = ForeignKeyField(User, backref="shares", column_name="user_id", null=True)
+    channel = CharField(max_length=50, default="unknown")
+    created_at = DateTimeField(default=datetime.utcnow)
+
+    class Meta:
+        table_name = "episode_shares"
