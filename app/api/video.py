@@ -2,6 +2,7 @@ from typing import Any
 
 from fastapi import APIRouter, Query
 
+from app.db.test_data import seed_temp_test_data
 from app.services.play_service import list_dramas, list_play_items
 
 router = APIRouter(prefix="/api/v1", tags=["video"])
@@ -50,6 +51,16 @@ def play_list(
             "hasMore": has_more,
         },
     }
+
+
+@router.post("/admin/test-data/temp", summary="临时写入测试短剧数据")
+def add_temp_test_data() -> dict[str, Any]:
+    """临时测试接口：向数据库写入一组可重复更新的测试短剧数据。
+
+    该接口仅用于本地开发、联调和临时验收，生产环境应移除或加上管理员鉴权。
+    """
+
+    return {"code": 0, "message": "success", "data": seed_temp_test_data()}
 
 
 @router.get("/admin/dramas", summary="Demo 短剧管理列表")
