@@ -67,9 +67,23 @@ class DramaEpisode(BaseModel, TimestampMixin):
     sort_order = IntegerField(default=0, index=True)
     status = IntegerField(default=1, index=True)
 
+    # 下列字段用于严格还原 data.json 中分集级别的前端展示配置。
+    # 字段命名保持 Python snake_case，接口组装时转换为样例要求的 camelCase / 原始拼写。
+    display_nickname = CharField(max_length=100, default="")
+    loop = BooleanField(default=True)
+    play_ing = BooleanField(default=False)
+    muted = BooleanField(default=False)
+    is_playing = BooleanField(default=False)
+    show_title_arrow = BooleanField(default=True)
+    show_look_all_btn = BooleanField(default=True)
+    look_all_btn_text = CharField(max_length=255, default="")
+    show_bottom_area = BooleanField(default=False)
+    bottom_area_btn_text = CharField(max_length=255, default="")
+    tool_info_json = TextField(default="")
+
     class Meta:
         table_name = "drama_episodes"
-        indexes = ((('drama', 'episode_no'), True),)
+        indexes = ((("drama", "episode_no"), True),)
 
 
 class DramaEpisodeStat(BaseModel):
@@ -97,7 +111,7 @@ class UserFollow(BaseModel):
 
     class Meta:
         table_name = "user_follows"
-        indexes = ((('follower_user', 'followed_user'), True),)
+        indexes = ((("follower_user", "followed_user"), True),)
 
 
 class UserEpisodeLike(BaseModel):
@@ -108,7 +122,7 @@ class UserEpisodeLike(BaseModel):
 
     class Meta:
         table_name = "user_episode_likes"
-        indexes = ((('user', 'episode'), True),)
+        indexes = ((("user", "episode"), True),)
 
 
 class UserDramaFavorite(BaseModel):
@@ -119,7 +133,7 @@ class UserDramaFavorite(BaseModel):
 
     class Meta:
         table_name = "user_drama_favorites"
-        indexes = ((('user', 'drama'), True),)
+        indexes = ((("user", "drama"), True),)
 
 
 class UserEpisodeProgress(BaseModel, TimestampMixin):
@@ -131,7 +145,7 @@ class UserEpisodeProgress(BaseModel, TimestampMixin):
 
     class Meta:
         table_name = "user_episode_progress"
-        indexes = ((('user', 'episode'), True),)
+        indexes = ((("user", "episode"), True),)
 
 
 class EpisodeComment(BaseModel, TimestampMixin):

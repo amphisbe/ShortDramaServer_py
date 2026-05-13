@@ -1,15 +1,15 @@
 from __future__ import annotations
 
+import json
 from typing import Any
 
-from peewee import DoesNotExist, JOIN
+from peewee import DoesNotExist
 
 from app.models import (
     Drama,
     DramaEpisode,
     DramaEpisodeStat,
     User,
-    UserDramaFavorite,
     UserEpisodeLike,
     UserEpisodeProgress,
     UserFollow,
@@ -27,6 +27,28 @@ def get_viewer_by_external_id(external_user_id: str | None) -> User | None:
         return User.get(User.external_user_id == external_user_id)
     except DoesNotExist:
         return None
+
+
+def _build_default_tool_info(like_count: int) -> list[dict[str, Any]]:
+    return [
+        {"icon": "shoucang", "text": "追剧"},
+        {"icon": "dianzan", "num": like_count, "text": "点赞"},
+        {"icon": "share", "text": "分享"},
+    ]
+
+
+def _load_tool_info(raw_json: str | None, like_count: int) -> list[dict[str, Any]]:
+    if not raw_json:
+        return _build_default_tool_info(like_count)
+
+    try:
+        value = json.loads(raw_json)
+    except json.JSONDecodeError:
+        return _build_default_tool_info(like_count)
+
+    if isinstance(value, list):
+        return value
+    return _build_default_tool_info(like_count)
 
 
 def build_play_item(episode: DramaEpisode, viewer: User | None = None) -> dict[str, Any]:
@@ -62,38 +84,36 @@ def build_play_item(episode: DramaEpisode, viewer: User | None = None) -> dict[s
             position = 0
 
     vip_text = "vip免费" if drama.vip_free else "付费观看"
+    look_all_btn_text = episode.look_all_btn_text or f"观看完整短剧 · 全{drama.total_episodes}集"
+    bottom_area_btn_text = episode.bottom_area_btn_text or f"选集 · 全{drama.total_episodes}集 · {vip_text}"
 
     return {
         "userId": author.external_user_id,
         "avatar": author.avatar_url,
-        "nickname": author.nickname,
+        "nickname": episode.display_nickname or author.nickname,
         "isfollow": is_follow,
         "videoId": episode.external_video_id,
         "playurl": episode.play_url,
         "poster": episode.poster_url,
         "vduser": drama.display_author_name or author.nickname,
         "vdtitle": episode.title,
-        "loop": True,
+        "loop": episode.loop,
         "duration": episode.duration_seconds,
-        "playIng": False,
-        "muted": False,
+        "playIng": episode.play_ing,
+        "muted": episode.muted,
         "likeSum": stat.like_count,
         "isLiked": is_liked,
         "commemtSum": stat.comment_count,
         "shareSum": stat.share_count,
-        "isPlaying": False,
+        "isPlaying": episode.is_playing,
         "position": position,
-        "showTitleArrow": True,
-        "showLookAllBtn": True,
-        "lookAllBtnText": f"观看完整短剧 · 全{drama.total_episodes}集",
+        "showTitleArrow": episode.show_title_arrow,
+        "showLookAllBtn": episode.show_look_all_btn,
+        "lookAllBtnText": look_all_btn_text,
         "total": drama.total_episodes,
-        "showBottomArea": False,
-        "bottomAreaBtnText": f"选集 · 全{drama.total_episodes}集 · {vip_text}",
-        "toolInfo": [
-            {"icon": "shoucang", "text": "追剧"},
-            {"icon": "dianzan", "num": stat.like_count, "text": "点赞"},
-            {"icon": "share", "text": "分享"},
-        ],
+        "showBottomArea": episode.show_bottom_area,
+        "bottomAreaBtnText": bottom_area_btn_text,
+        "toolInfo": _load_tool_info(episode.tool_info_json, stat.like_count),
     }
 
 
