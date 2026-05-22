@@ -8,13 +8,13 @@
 
 | 序号 | 类型 | 文件 | 描述 | 提交 SHA | 状态 |
 |------|------|------|------|----------|------|
-| F01 | Bug | `app/core/logging.py`, `app/main.py`, `app/db/database.py` | 日志配置重复覆盖，文件 Handler 被静默移除 | - | 待修复 |
-| F02 | Perf | `app/services/play_service.py` | N+1 查询：批量预取统计数据和 viewer 状态 | - | 待修复 |
-| F03 | Refactor | `app/db/seed.py`, `app/db/test_data.py` | `_save_model` 重复定义，提取到公共模块 | - | 待修复 |
-| F04 | Enhancement | `app/schemas/` | 添加 Pydantic Schema 替代 `dict[str, Any]` | - | 待修复 |
-| F05 | Bug | `app/models/drama.py` 及相关 | `datetime.utcnow()` 在 Python 3.12+ 已废弃；`total_episodes=0` 边界文案 | - | 待修复 |
-| F06 | Enhancement | `app/main.py` | 模块级代码（`settings`、`_setup_logging`）延迟到 lifespan 中执行 | - | 待修复 |
-| F07 | Enhancement | `app/db/database.py:91` | `ensure_demo_schema_compatibility()` 缺少 `close_database()` 配对 | - | 待修复 |
+| F01 | Bug | `app/core/logging.py`, `app/main.py`, `app/db/database.py` | 日志配置重复覆盖，文件 Handler 被静默移除 | `385098d` | ✅ 已修复 |
+| F02 | Perf | `app/services/play_service.py` | N+1 查询：批量预取统计数据和 viewer 状态 | `946947a` | ✅ 已修复 |
+| F03 | Refactor | `app/db/seed.py`, `app/db/test_data.py` | `_save_model` 重复定义，提取到公共模块 | `224cb25` | ✅ 已修复 |
+| F04 | Enhancement | `app/schemas/` | 添加 Pydantic Schema 替代 `dict[str, Any]` | - | ⏸️ 暂缓 |
+| F05 | Bug | `app/models/drama.py`, `app/services/play_service.py` | `datetime.utcnow()` 已废弃；`total_episodes=0` 边界文案 | `946947a` | ✅ 已修复 |
+| F06 | Enhancement | `app/main.py` | 模块级代码延迟到 lifespan 中执行（随 F01 完成） | `385098d` | ✅ 已修复 |
+| F07 | Enhancement | `app/db/database.py` | `ensure_demo_schema_compatibility()` 缺少 `close_database()` 配对 | `385098d` | ✅ 已修复 |
 
 ---
 
