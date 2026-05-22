@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from app.db.helpers import save_model
 from app.models import Drama, DramaEpisode, DramaEpisodeStat, User
 
 
@@ -52,12 +53,6 @@ TEMP_TEST_PLAY_ITEMS: list[dict[str, Any]] = [
 ]
 
 
-def _save_model(instance: Any, values: dict[str, Any]) -> None:
-    for key, value in values.items():
-        setattr(instance, key, value)
-    instance.save()
-
-
 def seed_temp_test_data() -> dict[str, Any]:
     """写入临时测试短剧数据。
 
@@ -74,7 +69,7 @@ def seed_temp_test_data() -> dict[str, Any]:
             "status": 1,
         },
     )
-    _save_model(
+    save_model(
         author,
         {
             "nickname": author_sample["nickname"],
@@ -95,7 +90,7 @@ def seed_temp_test_data() -> dict[str, Any]:
             "status": 1,
         },
     )
-    _save_model(
+    save_model(
         drama,
         {
             "title": "临时测试短剧",
@@ -135,7 +130,7 @@ def seed_temp_test_data() -> dict[str, Any]:
             external_video_id=item["videoId"],
             defaults=episode_values,
         )
-        _save_model(episode, episode_values)
+        save_model(episode, episode_values)
         episode_ids.append(int(episode.id))
 
         stat, _ = DramaEpisodeStat.get_or_create(
@@ -148,7 +143,7 @@ def seed_temp_test_data() -> dict[str, Any]:
                 "favorite_count": 0,
             },
         )
-        _save_model(
+        save_model(
             stat,
             {
                 "like_count": item["likeSum"],

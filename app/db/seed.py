@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from app.db.helpers import save_model
 from app.models import (
     Drama,
     DramaEpisode,
@@ -143,18 +144,12 @@ SAMPLE_PLAY_ITEMS: list[dict[str, Any]] = [
 ]
 
 
-def _save_model(instance, values: dict[str, Any]) -> None:
-    for key, value in values.items():
-        setattr(instance, key, value)
-    instance.save()
-
-
 def get_or_create_user(external_user_id: str, nickname: str, avatar_url: str) -> User:
     user, _ = User.get_or_create(
         external_user_id=external_user_id,
         defaults={"nickname": nickname, "avatar_url": avatar_url, "status": 1},
     )
-    _save_model(user, {"nickname": nickname, "avatar_url": avatar_url, "status": 1})
+    save_model(user, {"nickname": nickname, "avatar_url": avatar_url, "status": 1})
     return user
 
 
@@ -184,7 +179,7 @@ def seed_demo_data() -> None:
             "status": 1,
         },
     )
-    _save_model(
+    save_model(
         drama,
         {
             "title": "妈妈不要哭泣",
@@ -228,7 +223,7 @@ def seed_demo_data() -> None:
             external_video_id=item["videoId"],
             defaults=episode_values,
         )
-        _save_model(episode, episode_values)
+        save_model(episode, episode_values)
 
         stat, _ = DramaEpisodeStat.get_or_create(
             episode=episode,
@@ -240,7 +235,7 @@ def seed_demo_data() -> None:
                 "favorite_count": 0,
             },
         )
-        _save_model(
+        save_model(
             stat,
             {
                 "like_count": item["likeSum"],
