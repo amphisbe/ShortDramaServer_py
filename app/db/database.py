@@ -6,7 +6,6 @@ from peewee import Database, MySQLDatabase, Proxy, SqliteDatabase
 from playhouse.pool import PooledMySQLDatabase
 
 from app.core.config import Settings, get_settings
-from app.core.logging import setup_logging
 
 logger = logging.getLogger(__name__)
 
@@ -90,9 +89,12 @@ def ensure_demo_schema_compatibility() -> None:
 
     connect_database()
     try:
-        existing_columns = {column.name for column in database_proxy.get_columns("drama_episodes")}
+        existing_columns = {
+            column.name for column in database_proxy.get_columns("drama_episodes")
+        }
     except Exception as exc:  # pragma: no cover - 数据库驱动差异下的保护性日志
         logger.warning("检查 drama_episodes 表字段失败，跳过兼容迁移：%s", exc)
+        close_database()
         return
 
     settings = get_settings()
@@ -143,7 +145,6 @@ def initialize_runtime(create_schema: bool = False, seed: bool = False) -> None:
     """
 
     settings = get_settings()
-    setup_logging(settings.log_level)
     initialize_database(settings)
     connect_database()
 
