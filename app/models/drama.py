@@ -1,4 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timezone
+
+
+def _utcnow() -> datetime:
+    """返回 UTC 时区的当前时间（替代已废弃的 datetime.utcnow）。"""
+    return datetime.now(timezone.utc)
+
 
 from peewee import (
     BigAutoField,
@@ -21,11 +27,11 @@ class BaseModel(Model):
 
 
 class TimestampMixin:
-    created_at = DateTimeField(default=datetime.utcnow)
-    updated_at = DateTimeField(default=datetime.utcnow)
+    created_at = DateTimeField(default=_utcnow)
+    updated_at = DateTimeField(default=_utcnow)
 
     def save(self, *args, **kwargs):
-        self.updated_at = datetime.utcnow()
+        self.updated_at = _utcnow()
         return super().save(*args, **kwargs)
 
 
@@ -93,10 +99,10 @@ class DramaEpisodeStat(BaseModel):
     share_count = IntegerField(default=0)
     play_count = BigIntegerField(default=0)
     favorite_count = IntegerField(default=0)
-    updated_at = DateTimeField(default=datetime.utcnow)
+    updated_at = DateTimeField(default=_utcnow)
 
     def save(self, *args, **kwargs):
-        self.updated_at = datetime.utcnow()
+        self.updated_at = _utcnow()
         return super().save(*args, **kwargs)
 
     class Meta:
@@ -107,7 +113,7 @@ class UserFollow(BaseModel):
     id = BigAutoField()
     follower_user = ForeignKeyField(User, backref="following", column_name="follower_user_id")
     followed_user = ForeignKeyField(User, backref="followers", column_name="followed_user_id")
-    created_at = DateTimeField(default=datetime.utcnow)
+    created_at = DateTimeField(default=_utcnow)
 
     class Meta:
         table_name = "user_follows"
@@ -118,7 +124,7 @@ class UserEpisodeLike(BaseModel):
     id = BigAutoField()
     user = ForeignKeyField(User, backref="episode_likes", column_name="user_id")
     episode = ForeignKeyField(DramaEpisode, backref="user_likes", column_name="episode_id")
-    created_at = DateTimeField(default=datetime.utcnow)
+    created_at = DateTimeField(default=_utcnow)
 
     class Meta:
         table_name = "user_episode_likes"
@@ -129,7 +135,7 @@ class UserDramaFavorite(BaseModel):
     id = BigAutoField()
     user = ForeignKeyField(User, backref="drama_favorites", column_name="user_id")
     drama = ForeignKeyField(Drama, backref="user_favorites", column_name="drama_id")
-    created_at = DateTimeField(default=datetime.utcnow)
+    created_at = DateTimeField(default=_utcnow)
 
     class Meta:
         table_name = "user_drama_favorites"
@@ -164,7 +170,7 @@ class EpisodeShare(BaseModel):
     episode = ForeignKeyField(DramaEpisode, backref="shares", column_name="episode_id")
     user = ForeignKeyField(User, backref="shares", column_name="user_id", null=True)
     channel = CharField(max_length=50, default="unknown")
-    created_at = DateTimeField(default=datetime.utcnow)
+    created_at = DateTimeField(default=_utcnow)
 
     class Meta:
         table_name = "episode_shares"
