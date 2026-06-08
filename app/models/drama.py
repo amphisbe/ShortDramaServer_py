@@ -50,11 +50,16 @@ class Drama(BaseModel, TimestampMixin):
     id = BigAutoField()
     external_drama_id = CharField(max_length=24, null=True, unique=True)
     title = CharField(max_length=255, default="")
+    description = TextField(default="")
+    category = CharField(max_length=50, default="推荐", index=True)
+    tags = TextField(default="[]")
     display_author_name = CharField(max_length=100, default="")
     author_user = ForeignKeyField(User, backref="dramas", column_name="author_user_id")
     total_episodes = IntegerField(default=0)
     cover_url = CharField(max_length=1024, default="")
     vip_free = BooleanField(default=True)
+    play_count = BigIntegerField(default=0)
+    follow_count = BigIntegerField(default=0)
     status = IntegerField(default=1, index=True)
 
     class Meta:

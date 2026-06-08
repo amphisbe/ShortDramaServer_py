@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.video import router as video_router
+from app.api.drama import router as drama_router
 from app.core.config import get_settings
 from app.core.logging import setup_logging
 from app.db.database import close_database, initialize_runtime
@@ -48,6 +49,7 @@ app.add_middleware(
 )
 
 app.include_router(video_router)
+app.include_router(drama_router)
 
 
 @app.get("/health", tags=["system"], summary="健康检查")

@@ -1,0 +1,216 @@
+{
+	"info": {
+		"name": "ShortDrama API",
+		"description": "短剧服务端接口集合 — 首页/详情页/播放页",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "🩺 健康检查",
+			"request": {
+				"method": "GET",
+				"url": "{{base_url}}/health",
+				"description": "服务状态检查"
+			}
+		},
+		{
+			"name": "🏠 首页",
+			"item": [
+				{
+					"name": "1. 短剧列表",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/v1/dramas?category=推荐&page=1&page_size=10",
+							"query": [
+								{ "key": "category", "value": "推荐", "description": "分类筛选" },
+								{ "key": "page", "value": "1" },
+								{ "key": "page_size", "value": "10" }
+							]
+						}
+					}
+				},
+				{
+					"name": "2. 短剧列表 - 分类古装",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/v1/dramas?category=古装",
+							"query": [
+								{ "key": "category", "value": "古装" },
+								{ "key": "page", "value": "1" },
+								{ "key": "page_size", "value": "20" }
+							]
+						}
+					}
+				},
+				{
+					"name": "3. 主推短剧",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/v1/dramas/featured"
+					}
+				},
+				{
+					"name": "4. 热门短剧",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/v1/dramas/hot?count=4",
+							"query": [{ "key": "count", "value": "4" }]
+						}
+					}
+				},
+				{
+					"name": "5. 热搜短剧",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/v1/dramas/trending?count=5",
+							"query": [{ "key": "count", "value": "5" }]
+						}
+					}
+				},
+				{
+					"name": "6. 猜你喜欢",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/v1/dramas/recommended?exclude_id=drama_001&count=4",
+							"query": [
+								{ "key": "exclude_id", "value": "drama_001" },
+								{ "key": "count", "value": "4" }
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "📄 详情页",
+			"item": [
+				{
+					"name": "7. 短剧详情",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/v1/dramas/drama_001"
+					}
+				},
+				{
+					"name": "8. 短剧详情 - 不存在",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/v1/dramas/not_exist_id",
+						"description": "预期返回 code=404"
+					}
+				},
+				{
+					"name": "9. 同类推荐",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/v1/dramas/drama_001/related?category=家庭",
+							"query": [{ "key": "category", "value": "家庭" }]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "▶️ 播放页",
+			"item": [
+				{
+					"name": "10. 剧集列表（播放数据）",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/v1/dramas/drama_001/episodes"
+					}
+				},
+				{
+					"name": "11. 剧集列表 - 指定用户",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/v1/dramas/drama_001/episodes?viewer_user_id=user_mama",
+							"query": [{ "key": "viewer_user_id", "value": "user_mama" }]
+						}
+					}
+				},
+				{
+					"name": "12. 剧集列表 - 不存在",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/v1/dramas/not_exist/episodes",
+						"description": "预期返回 code=404"
+					}
+				}
+			]
+		},
+		{
+			"name": "🔗 辅助接口",
+			"item": [
+				{
+					"name": "13. 反查短剧ID",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/v1/dramas/by-user/user_mama",
+						"description": "通过 userId 反查 external_drama_id"
+					}
+				},
+				{
+					"name": "14. 反查 - 不存在",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/v1/dramas/by-user/nonexistent",
+						"description": "预期返回 code=404"
+					}
+				}
+			]
+		},
+		{
+			"name": "📺 原有播放列表（兼容）",
+			"item": [
+				{
+					"name": "15. 原始兼容格式",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/v1/video/play-list/raw?page=1&page_size=5",
+							"query": [
+								{ "key": "page", "value": "1" },
+								{ "key": "page_size", "value": "5" }
+							]
+						}
+					}
+				},
+				{
+					"name": "16. 统一响应格式",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/v1/video/play-list?page=1&page_size=2",
+							"query": [
+								{ "key": "page", "value": "1" },
+								{ "key": "page_size", "value": "2" }
+							]
+						}
+					}
+				},
+				{
+					"name": "17. 管理端短剧列表",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/v1/admin/dramas"
+					}
+				}
+			]
+		}
+	]
+}

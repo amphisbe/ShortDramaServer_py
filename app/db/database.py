@@ -88,18 +88,24 @@ def ensure_demo_schema_compatibility() -> None:
     """
 
     connect_database()
-    try:
-        existing_columns = {
-            column.name for column in database_proxy.get_columns("drama_episodes")
-        }
-    except Exception as exc:  # pragma: no cover - 数据库驱动差异下的保护性日志
-        logger.warning("检查 drama_episodes 表字段失败，跳过兼容迁移：%s", exc)
-        close_database()
-        return
+    _migrate_drama_episodes()
+    _migrate_dramas()
 
+
+def _get_existing_columns(table_name: str) -> set[str]:
+    try:
+        return {column.name for column in database_proxy.get_columns(table_name)}
+    except Exception as exc:
+        logger.warning("检查 %s 表字段失败：%s", table_name, exc)
+        return set()
+
+
+def _migrate_drama_episodes() -> None:
+    existing = _get_existing_columns("drama_episodes")
     settings = get_settings()
+
     if settings.db_driver == "mysql":
-        column_definitions = {
+        col_defs = {
             "display_nickname": "VARCHAR(100) NOT NULL DEFAULT ''",
             "loop": "TINYINT(1) NOT NULL DEFAULT 1",
             "play_ing": "TINYINT(1) NOT NULL DEFAULT 0",
@@ -112,9 +118,9 @@ def ensure_demo_schema_compatibility() -> None:
             "bottom_area_btn_text": "VARCHAR(255) NOT NULL DEFAULT ''",
             "tool_info_json": "TEXT NOT NULL",
         }
-        quote_left, quote_right = "`", "`"
+        ql, qr = "`", "`"
     else:
-        column_definitions = {
+        col_defs = {
             "display_nickname": "VARCHAR(100) NOT NULL DEFAULT ''",
             "loop": "INTEGER NOT NULL DEFAULT 1",
             "play_ing": "INTEGER NOT NULL DEFAULT 0",
@@ -127,14 +133,45 @@ def ensure_demo_schema_compatibility() -> None:
             "bottom_area_btn_text": "VARCHAR(255) NOT NULL DEFAULT ''",
             "tool_info_json": "TEXT NOT NULL DEFAULT ''",
         }
-        quote_left, quote_right = '"', '"'
+        ql, qr = '"', '"'
 
-    for column_name, definition in column_definitions.items():
-        if column_name in existing_columns:
+    for col_name, definition in col_defs.items():
+        if col_name in existing:
             continue
-        sql = f"ALTER TABLE drama_episodes ADD COLUMN {quote_left}{column_name}{quote_right} {definition}"
+        sql = f"ALTER TABLE drama_episodes ADD COLUMN {ql}{col_name}{qr} {definition}"
         database_proxy.execute_sql(sql)
-        logger.info("已补齐 drama_episodes.%s 字段", column_name)
+        logger.info("已补齐 drama_episodes.%s 字段", col_name)
+
+
+def _migrate_dramas() -> None:
+    existing = _get_existing_columns("dramas")
+    settings = get_settings()
+
+    if settings.db_driver == "mysql":
+        col_defs = {
+            "description": "TEXT NOT NULL DEFAULT ('')",
+            "category": "VARCHAR(50) NOT NULL DEFAULT '推荐'",
+            "tags": "TEXT NOT NULL DEFAULT ('[]')",
+            "play_count": "BIGINT NOT NULL DEFAULT 0",
+            "follow_count": "BIGINT NOT NULL DEFAULT 0",
+        }
+        ql, qr = "`", "`"
+    else:
+        col_defs = {
+            "description": "TEXT NOT NULL DEFAULT ''",
+            "category": "VARCHAR(50) NOT NULL DEFAULT '推荐'",
+            "tags": "TEXT NOT NULL DEFAULT '[]'",
+            "play_count": "INTEGER NOT NULL DEFAULT 0",
+            "follow_count": "INTEGER NOT NULL DEFAULT 0",
+        }
+        ql, qr = '"', '"'
+
+    for col_name, definition in col_defs.items():
+        if col_name in existing:
+            continue
+        sql = f"ALTER TABLE dramas ADD COLUMN {ql}{col_name}{qr} {definition}"
+        database_proxy.execute_sql(sql)
+        logger.info("已补齐 dramas.%s 字段", col_name)
 
 
 def initialize_runtime(create_schema: bool = False, seed: bool = False) -> None:
