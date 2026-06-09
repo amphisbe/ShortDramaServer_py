@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(venv\\\\Scripts\\\\python scripts\\\\smoke_test.py)",
+      "Bash(venv/Scripts/python.exe scripts/smoke_test.py)",
+      "Bash(/d/wangs/Software/Python312/python.exe -m pip list)",
+      "Bash(rm -f runtime/short_drama_demo.db runtime/short_drama_demo.db-shm runtime/short_drama_demo.db-wal)",
+      "Bash(/d/wangs/Software/Python312/python.exe scripts/smoke_test.py)",
+      "Bash(PYTHONPATH=. /d/wangs/Software/Python312/python.exe scripts/smoke_test.py)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(ls *.bat)",
+      "Bash(ls .venv/bin/activate)",
+      "Bash(ls .venv/Scripts/activate)",
+      "Bash(which python *)",
+      "Bash(py --version)",
+      "Bash(D:\\\\wangs\\\\Software\\\\Python312\\\\python.exe -c \"import sys; print\\(sys.version\\)\")",
+      "Bash(D:\\\\wangs\\\\workspace\\\\python\\\\ShortDramaServer_py\\\\.venv\\\\Scripts\\\\python.exe -c \"import sys; print\\(sys.version\\)\")",
+      "Bash(/c/Users/wangs/AppData/Local/Microsoft/WindowsApps/python3.exe --version)",
+      "Bash(\"D:/wangs/Software/Python312/python.exe\" -m pip list)",
+      "Bash(findstr -i \"peewee fastapi uvicorn\")"
+    ]
+  }
+}

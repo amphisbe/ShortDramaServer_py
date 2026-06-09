@@ -32,6 +32,11 @@ class Settings(BaseSettings):
     mysql_max_connections: int = Field(default=32, alias="MYSQL_MAX_CONNECTIONS")
     mysql_stale_timeout: int = Field(default=300, alias="MYSQL_STALE_TIMEOUT")
 
+    static_img: str = Field(default="./static/img", alias="STATIC_IMG")
+    static_demo: str = Field(default="./static/demo", alias="STATIC_DEMO")
+    video_mode: Literal["demo", "online"] = Field(default="demo", alias="VIDEO_MODE")
+    video_list: str = Field(default="", alias="VIDEO_LIST")
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

@@ -28,3 +28,27 @@
 2026-06-08 11:21:16 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
 2026-06-08 11:21:16 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
 2026-06-08 11:21:16 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-08 17:41:48 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-08 17:41:48 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-08 17:41:48 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-08 17:41:48 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-08 17:47:42 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-08 17:47:42 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-08 17:47:42 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-08 17:47:42 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-08 17:49:44 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-08 17:49:44 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-08 17:49:44 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-08 17:49:44 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-08 20:44:33 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-08 20:44:33 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-08 20:44:33 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-08 20:44:33 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-08 20:45:20 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-08 20:45:20 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-08 20:45:20 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-08 20:45:20 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-09 11:41:54 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-09 11:41:54 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-09 11:41:54 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-09 11:41:54 [INFO] app.db.database - 数据库表结构已创建或已存在

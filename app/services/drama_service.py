@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+import random
 import json
 import math
 from typing import Any
@@ -23,6 +24,10 @@ from app.models import (
 )
 
 
+from app.core.config import get_settings
+
+settings = get_settings()
+
 def _load_tags(tags_json: str) -> list[str]:
     if not tags_json:
         return []
@@ -37,10 +42,13 @@ def _load_tags(tags_json: str) -> list[str]:
 
 def _build_drama_item(drama: Drama) -> dict[str, Any]:
     """将 Drama 模型组装为前端需要的 JSON 格式。"""
+    static_base = settings.static_img.rstrip("/")
+    cover = f"{static_base}/{drama.external_drama_id}.jpg"
     return {
         "dramaId": drama.external_drama_id or str(drama.id),
         "title": drama.title,
-        "cover": drama.cover_url,
+        # "cover": drama.cover_url,
+        "cover": cover,
         "description": drama.description,
         "category": drama.category,
         "tags": _load_tags(drama.tags),
@@ -303,6 +311,27 @@ def _preload_viewer_state(
     return liked_ids, is_follow, progress_map
 
 
+def _resolve_play_url(db_play_url: str) -> str:
+    """根据 VIDEO_MODE 决定播放地址。
+    
+    demo 模式下从 VIDEO_LIST 随机选取一个地址；
+    其他模式直接返回数据库中的 play_url。
+    """
+    settings = get_settings()
+    if settings.video_mode != "demo":
+        return db_play_url
+    
+    raw = settings.video_list
+    if not raw:
+        return db_play_url
+    
+    urls = [u.strip() for u in raw.split(",") if u.strip()]
+    if not urls:
+        return db_play_url
+    
+    return random.choice(urls)
+
+
 def _build_episode_item(
     episode: DramaEpisode,
     drama: Drama,
@@ -325,13 +354,15 @@ def _build_episode_item(
         f"选集 · {total_text} · {vip_text}" if total_text else ""
     )
 
+
+
     return {
         "userId": author.external_user_id,
         "avatar": author.avatar_url,
         "nickname": episode.display_nickname or author.nickname,
         "isfollow": is_follow,
         "videoId": episode.external_video_id,
-        "playurl": episode.play_url,
+        "playurl": _resolve_play_url(episode.play_url),
         "poster": episode.poster_url,
         "vduser": drama.display_author_name or author.nickname,
         "vdtitle": episode.title,
