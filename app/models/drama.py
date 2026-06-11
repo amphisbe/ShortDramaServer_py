@@ -22,20 +22,18 @@ from app.db.database import database_proxy
 
 
 class BaseModel(Model):
+    created_at = DateTimeField(default=_utcnow)
+    updated_at = DateTimeField(default=_utcnow)
+    
+    def save(self, *args, **kwargs):
+        self.updated_at = _utcnow()
+        return super().save(*args, **kwargs)
+    
     class Meta:
         database = database_proxy
 
 
-class TimestampMixin:
-    created_at = DateTimeField(default=_utcnow)
-    updated_at = DateTimeField(default=_utcnow)
-
-    def save(self, *args, **kwargs):
-        self.updated_at = _utcnow()
-        return super().save(*args, **kwargs)
-
-
-class User(BaseModel, TimestampMixin):
+class User(BaseModel):
     id = BigAutoField()
     external_user_id = CharField(max_length=24, unique=True, index=True)
     nickname = CharField(max_length=100, default="")
@@ -46,7 +44,7 @@ class User(BaseModel, TimestampMixin):
         table_name = "users"
 
 
-class Drama(BaseModel, TimestampMixin):
+class Drama(BaseModel):
     id = BigAutoField()
     external_drama_id = CharField(max_length=24, null=True, unique=True)
     title = CharField(max_length=255, default="")
@@ -66,7 +64,7 @@ class Drama(BaseModel, TimestampMixin):
         table_name = "dramas"
 
 
-class DramaEpisode(BaseModel, TimestampMixin):
+class DramaEpisode(BaseModel):
     id = BigAutoField()
     drama = ForeignKeyField(Drama, backref="episodes", column_name="drama_id")
     external_video_id = CharField(max_length=24, unique=True, index=True)
@@ -104,11 +102,6 @@ class DramaEpisodeStat(BaseModel):
     share_count = IntegerField(default=0)
     play_count = BigIntegerField(default=0)
     favorite_count = IntegerField(default=0)
-    updated_at = DateTimeField(default=_utcnow)
-
-    def save(self, *args, **kwargs):
-        self.updated_at = _utcnow()
-        return super().save(*args, **kwargs)
 
     class Meta:
         table_name = "drama_episode_stats"
@@ -118,7 +111,6 @@ class UserFollow(BaseModel):
     id = BigAutoField()
     follower_user = ForeignKeyField(User, backref="following", column_name="follower_user_id")
     followed_user = ForeignKeyField(User, backref="followers", column_name="followed_user_id")
-    created_at = DateTimeField(default=_utcnow)
 
     class Meta:
         table_name = "user_follows"
@@ -129,7 +121,6 @@ class UserEpisodeLike(BaseModel):
     id = BigAutoField()
     user = ForeignKeyField(User, backref="episode_likes", column_name="user_id")
     episode = ForeignKeyField(DramaEpisode, backref="user_likes", column_name="episode_id")
-    created_at = DateTimeField(default=_utcnow)
 
     class Meta:
         table_name = "user_episode_likes"
@@ -140,14 +131,13 @@ class UserDramaFavorite(BaseModel):
     id = BigAutoField()
     user = ForeignKeyField(User, backref="drama_favorites", column_name="user_id")
     drama = ForeignKeyField(Drama, backref="user_favorites", column_name="drama_id")
-    created_at = DateTimeField(default=_utcnow)
 
     class Meta:
         table_name = "user_drama_favorites"
         indexes = ((("user", "drama"), True),)
 
 
-class UserEpisodeProgress(BaseModel, TimestampMixin):
+class UserEpisodeProgress(BaseModel):
     id = BigAutoField()
     user = ForeignKeyField(User, backref="episode_progress", column_name="user_id")
     episode = ForeignKeyField(DramaEpisode, backref="user_progress", column_name="episode_id")
@@ -159,7 +149,7 @@ class UserEpisodeProgress(BaseModel, TimestampMixin):
         indexes = ((("user", "episode"), True),)
 
 
-class EpisodeComment(BaseModel, TimestampMixin):
+class EpisodeComment(BaseModel):
     id = BigAutoField()
     episode = ForeignKeyField(DramaEpisode, backref="comments", column_name="episode_id")
     user = ForeignKeyField(User, backref="comments", column_name="user_id")
@@ -175,7 +165,6 @@ class EpisodeShare(BaseModel):
     episode = ForeignKeyField(DramaEpisode, backref="shares", column_name="episode_id")
     user = ForeignKeyField(User, backref="shares", column_name="user_id", null=True)
     channel = CharField(max_length=50, default="unknown")
-    created_at = DateTimeField(default=_utcnow)
 
     class Meta:
         table_name = "episode_shares"

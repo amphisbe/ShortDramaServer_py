@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>团队知识中枢系统 - 架构设计</title>
+<style>
+:root { color-scheme: light; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: #f5f5f5;
+  color: #333;
+  line-height: 1.7;
+  padding: 40px 20px;
+}
+.container { max-width: 1000px; margin: 0 auto; }
+h1 { text-align: center; font-size: 28px; margin-bottom: 8px; color: #1a1a1a; }
+.subtitle { text-align: center; color: #888; margin-bottom: 40px; font-size: 14px; }
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 32px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.card h2 { font-size: 20px; margin-bottom: 16px; color: #1a1a1a; border-bottom: 2px solid #4A90D9; padding-bottom: 10px; display: inline-block; }
+.card h3 { font-size: 16px; margin: 20px 0 10px 0; color: #444; }
+.flow-desc { font-size: 14px; color: #666; margin-bottom: 16px; line-height: 1.8; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.tag-capture { background: #e3f2fd; color: #1565c0; }
+.tag-hub { background: #fff3e0; color: #e65100; }
+.tag-storage { background: #e8f5e9; color: #2e7d32; }
+.tag-route { background: #fce4ec; color: #c62828; }
+.mermaid-wrapper {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
+  overflow-x: auto;
+}
+.pillar-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 16px 0; }
+@media (max-width: 768px) { .pillar-row { grid-template-columns: 1fr; } }
+.pillar {
+  background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+.pillar .icon { font-size: 32px; margin-bottom: 8px; }
+.pillar .name { font-weight: 700; font-size: 16px; margin-bottom: 10px; color: #1a1a1a; }
+.pillar .desc { font-size: 13px; color: #666; line-height: 1.6; }
+.pillar .label {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+.label-blue { background: #e3f2fd; color: #1565c0; }
+.label-orange { background: #fff3e0; color: #e65100; }
+.label-green { background: #e8f5e9; color: #2e7d32; }
+.boundary { background: #fffbe6; border-left: 4px solid #f5a623; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 14px; color: #8a6d14; }
+.capability-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+@media (max-width: 768px) { .capability-grid { grid-template-columns: 1fr; } }
+.cap-item {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 14px;
+}
+.cap-item .cap-title { font-weight: 600; margin-bottom: 4px; color: #333; }
+.cap-item .cap-detail { font-size: 13px; color: #777; }
+.legend { display: flex; gap: 20px; justify-content: center; margin: 20px 0; font-size: 13px; color: #888; }
+.legend span { display: flex; align-items: center; gap: 6px; }
+.legend .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.dot-blue { background: #4A90D9; }
+.dot-orange { background: #f5a623; }
+.dot-green { background: #4caf50; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>团队知识中枢系统</h1>
+  <p class="subtitle">三层架构设计 — 采集、调度、存储</p>
+
+  <div class="legend">
+    <span><span class="dot dot-blue"></span> 采集层</span>
+    <span><span class="dot dot-orange"></span> 中枢调度</span>
+    <span><span class="dot dot-green"></span> 知识落库</span>
+  </div>
+
+  <!-- 全景架构图 -->
+  <div class="card">
+    <h2>全景架构总览</h2>
+    <div class="mermaid-wrapper">
+      <pre class="mermaid">
+flowchart TB
+    subgraph L1[第一层：采集端 Capture]
+        direction LR
+        A1[🖥 Chrome 插件]
+        A2[💬 微信小程序]
+        A3[📂 桌面分享目标]
+        A4[🔌 开放 API]
+    end
+
+    subgraph L1P[预处理引擎]
+        direction LR
+        P1[🎤 语音→文字]
+        P2[🎬 视频→文字]
+        P3[📷 OCR 图片识别]
+        P4[📄 PDF 文本提取]
+    end
+
+    subgraph L2[第二层：中枢调度 Hub Agent]
+        direction TB
+        B1[📥 收件箱]
+        B2[🧠 AI 内容理解]
+        B3[🔀 路由分发引擎]
+        B4[📊 状态跟踪与催办]
+        B1 --> B2 --> B3 --> B4
+    end
+
+    subgraph L3[第三层：知识落库 Storage]
+        direction LR
+        C1[📁 Obsidian Vault<br/>个人深度学习区]
+        C2[📋 Notion Workspace<br/>团队协作区]
+    end
+
+    subgraph EXT[外部通知]
+        D1[📢 飞书/钉钉/企微<br/>提醒通知]
+    end
+
+    L1 --> L1P --> B1
+    B3 -->|深度参考| C1
+    B3 -->|协作任务| C2
+    B4 -->|催办提醒| D1
+
+    style L1 fill:#e3f2fd,stroke:#1565c0
+    style L1P fill:#e8eaf6,stroke:#3f51b5
+    style L2 fill:#fff3e0,stroke:#e65100
+    style L3 fill:#e8f5e9,stroke:#2e7d32
+    style EXT fill:#fce4ec,stroke:#c62828
+      </pre>
+    </div>
+  </div>
+
+  <!-- 第一层详细 -->
+  <div class="card">
+    <h2>第一层：采集端详细设计</h2>
+    <p class="flow-desc">多形态入口覆盖不同场景。每个采集端内置预处理引擎，将富媒体统一转为结构化文字后推入中枢收件箱。</p>
+
+    <div class="pillar-row">
+      <div class="pillar">
+        <div class="icon">🖥</div>
+        <div class="name">Chrome/Firefox 插件</div>
+        <div class="desc">网页剪藏、选中文字+截图一键发送、链接分享。适合电脑端浏览时快速采集。</div>
+        <span class="tag tag-capture">浏览器端</span>
+      </div>
+      <div class="pillar">
+        <div class="icon">💬</div>
+        <div class="name">微信服务号/小程序</div>
+        <div class="desc">聊天文件转发、公众号文章、语音消息直接发送。移动端碎片采集的首选入口。</div>
+        <span class="tag tag-capture">移动端</span>
+      </div>
+      <div class="pillar">
+        <div class="icon">📂</div>
+        <div class="name">桌面分享目标</div>
+        <div class="desc">macOS Share Menu 或 Windows "发送到"菜单。本地文件、截图一键送出。</div>
+        <span class="tag tag-capture">桌面端</span>
+      </div>
+    </div>
+
+    <h3>预处理引擎（端侧）</h3>
+    <div class="capability-grid">
+      <div class="cap-item">
+        <div class="cap-title">🎤 语音 → 文字</div>
+        <div class="cap-detail">Whisper 本地模型或云端 STT，支持多语言</div>
+      </div>
+      <div class="cap-item">
+        <div class="cap-title">🎬 视频 → 文字简报</div>
+        <div class="cap-detail">分离音频轨 → STT → 带时间戳文字稿</div>
+      </div>
+      <div class="cap-item">
+        <div class="cap-title">📷 OCR 图片识别</div>
+        <div class="cap-detail">截图/照片文字提取，原图保留为附件</div>
+      </div>
+      <div class="cap-item">
+        <div class="cap-title">📄 PDF 文本提取</div>
+        <div class="cap-detail">内嵌文本优先，扫描件 OCR 兜底</div>
+      </div>
+    </div>
+
+    <h3>初筛流程</h3>
+    <div class="mermaid-wrapper">
+      <pre class="mermaid">
+flowchart LR
+    A[原始内容] --> B{去重检查}
+    B -->|已存在| X[丢弃]
+    B -->|新内容| C{低质过滤}
+    C -->|垃圾内容| X
+    C -->|通过| D[格式标准化]
+    D --> E[采集人可选备注/标签]
+    E --> F[📤 推送中枢收件箱]
+      </pre>
+    </div>
+  </div>
+
+  <!-- 第二层详细 -->
+  <div class="card">
+    <h2>第二层：中枢调度中心</h2>
+    <p class="flow-desc">部署在公网服务器的团队 Agent 调度中心。核心原则：<strong>不拆解任务、不执行具体业务，只负责接收、理解、分发、跟踪。</strong></p>
+
+    <h3>核心流程</h3>
+    <div class="mermaid-wrapper">
+      <pre class="mermaid">
+flowchart TB
+    subgraph 接收[① 接收]
+        R1[来自采集端的标准化内容]
+    end
+
+    subgraph 理解[② AI 内容理解]
+        U1[内容分类<br/>技术/行业/竞品/会议/灵感...]
+        U2[项目归属<br/>识别关联项目或主题]
+        U3[紧迫度判断<br/>紧急 / 常规 / 可延迟]
+        U4[人员匹配<br/>根据职责和负载推荐接收人]
+    end
+
+    subgraph 分发[③ 分发路由]
+        D1[👤 指派给对应项目经理]
+        D2[📁 写入 Obsidian Vault]
+        D3[📋 写入 Notion 数据库/看板]
+    end
+
+    subgraph 跟踪[④ 状态跟踪与催办]
+        T1[待分发 → 已分发 → 处理中 → 已完结]
+        T2[⏰ 超时自动提醒]
+        T3[📊 周期汇总报告]
+    end
+
+    接收 --> 理解 --> 分发 --> 跟踪
+
+    style 接收 fill:#e3f2fd,stroke:#1565c0
+    style 理解 fill:#e8eaf6,stroke:#3f51b5
+    style 分发 fill:#fff3e0,stroke:#e65100
+    style 跟踪 fill:#f3e5f5,stroke:#7b1fa2
+      </pre>
+    </div>
+
+    <div class="boundary">
+      <strong>边界约束：</strong>中枢不做详细内容编辑、不替代人做决策、不执行下游业务逻辑。它只回答一个问题——"这条内容该交给谁？"——然后定期询问"处理得怎么样了？"
+    </div>
+
+    <h3>核心能力</h3>
+    <div class="capability-grid">
+      <div class="cap-item">
+        <div class="cap-title">🧠 内容理解</div>
+        <div class="cap-detail">AI 判断类型、主题、紧急度、关联项目</div>
+      </div>
+      <div class="cap-item">
+        <div class="cap-title">👤 人员路由</div>
+        <div class="cap-detail">规则 + AI 推理，匹配最佳接收人</div>
+      </div>
+      <div class="cap-item">
+        <div class="cap-title">🔀 系统路由</div>
+        <div class="cap-detail">决定进 Obsidian 还是 Notion，哪个文件夹/数据库</div>
+      </div>
+      <div class="cap-item">
+        <div class="cap-title">📊 状态跟踪</div>
+        <div class="cap-detail">全生命周期可见，超时提醒，周期汇总</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第三层详细 -->
+  <div class="card">
+    <h2>第三层：知识落库</h2>
+
+    <div class="pillar-row" style="grid-template-columns: repeat(2, 1fr);">
+      <div class="pillar">
+        <div class="icon">📁</div>
+        <div class="name">Obsidian Vault</div>
+        <div class="desc">
+          深度学习区。AI 提炼内容自动生成 Markdown，建立双链知识图谱。<br/><br/>
+          适合：个人思考、深度整理、长期洞察
+        </div>
+        <span class="label label-green">个人区</span>
+      </div>
+      <div class="pillar">
+        <div class="icon">📋</div>
+        <div class="name">Notion Workspace</div>
+        <div class="desc">
+          团队协作区。任务卡片、共享文档、看板、周报数据库。<br/><br/>
+          适合：团队共享、任务跟踪、公开文档
+        </div>
+        <span class="label label-blue">团队区</span>
+      </div>
+    </div>
+
+    <h3>路由分发规则示意</h3>
+    <div class="mermaid-wrapper">
+      <pre class="mermaid">
+flowchart LR
+    HUB[中枢路由引擎] -->|AI 判断为深度参考<br/>技术文档/学习笔记/灵感| OBS[📁 Obsidian<br/>自动生成 Markdown<br/>建立双链图谱]
+    HUB -->|AI 判断为协作事项<br/>任务/会议/公告/看板| NOT[📋 Notion<br/>写入对应数据库<br/>通知相关人员]
+    HUB -->|紧急通知| MSG[📢 飞书/钉钉群消息<br/>即时提醒]
+      </pre>
+    </div>
+  </div>
+
+  <!-- 数据流全景 -->
+  <div class="card">
+    <h2>端到端数据流</h2>
+    <div class="mermaid-wrapper">
+      <pre class="mermaid">
+sequenceDiagram
+    actor U as 👤 团队成员
+    participant C as 📥 采集端
+    participant H as 🧠 中枢调度
+    participant AI as 🤖 AI 引擎
+    participant PM as 👔 项目经理
+    participant O as 📁 Obsidian
+    participant N as 📋 Notion
+
+    U->>C: 粘贴链接 / 分享截图 / 转发文件
+    C->>C: 预处理（STT/OCR/去重/标准化）
+    C->>H: 推送标准化内容
+
+    H->>AI: 分析内容属性
+    AI-->>H: 分类/标签/项目归属/紧急度/推荐接收人
+
+    alt 深度参考类
+        H->>O: 写入 Markdown + 建立双链
+    else 协作事项类
+        H->>N: 创建任务卡片 / 文档
+        H->>PM: 通知「有新内容待处理」
+    end
+
+    loop 定期跟踪
+        H->>PM: 询问处理进度
+        PM-->>H: 反馈状态
+        H->>H: 更新生命周期状态
+    end
+
+    Note over H: 超时未完结 → 自动催办通知
+    Note over H: 周期末 → 生成汇总报告
+      </pre>
+    </div>
+    <p style="text-align:center;color:#aaa;font-size:13px;margin-top:12px;">端到端数据流：从采集到归档，中枢全程调度但不拆解执行</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.10.0/dist/mermaid.min.js" integrity="sha384-PY+AFiXLIHkR5jE4nk0JwPQQmmQlT4mJXFlgeT4jJeuARaBQBK+nSwwxzrPRAtUM" crossorigin="anonymous"></script>
+<script>
+mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: 'base' });
+</script>
+</body>
+</html>
