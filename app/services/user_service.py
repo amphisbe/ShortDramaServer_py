@@ -193,7 +193,7 @@ def toggle_like(external_user_id: str, external_video_id: str) -> dict:
         return {"liked": False, "likeCount": 0}
 
     try:
-        episode = DramaEpisode.get(DramaEpisode.external_video_id == external_video_id)
+        episode = DramaEpisode.get(DramaEpisode.id == external_video_id)
     except Exception:
         return {"liked": False, "likeCount": 0}
 
@@ -221,7 +221,7 @@ def check_liked(external_user_id: str, external_video_id: str) -> dict:
         return {"liked": False, "likeCount": 0}
 
     try:
-        episode = DramaEpisode.get(DramaEpisode.external_video_id == external_video_id)
+        episode = DramaEpisode.get(DramaEpisode.id == external_video_id)
     except Exception:
         return {"liked": False, "likeCount": 0}
 
@@ -240,12 +240,13 @@ def check_liked(external_user_id: str, external_video_id: str) -> dict:
 
 def toggle_favorite(external_user_id: str, external_video_id: str) -> dict:
     """收藏/取消收藏短剧（toggle），通过剧集 video_id 反查短剧后切换收藏状态。"""
+    print('favorite:::::::::', external_user_id, external_video_id)
     user = get_user_by_external_id(external_user_id)
     if user is None:
         return {"favorited": False, "followCount": 0}
 
     try:
-        episode = DramaEpisode.get(DramaEpisode.external_video_id == external_video_id)
+        episode = DramaEpisode.get(DramaEpisode.id == external_video_id)
         drama = episode.drama
     except Exception:
         return {"favorited": False, "followCount": 0}
@@ -273,7 +274,7 @@ def record_share(
 ) -> dict:
     """记录一次分享事件，返回分享状态和分享数。"""
     try:
-        episode = DramaEpisode.get(DramaEpisode.external_video_id == external_video_id)
+        episode = DramaEpisode.get(DramaEpisode.id == external_video_id)
     except Exception:
         return {"shared": False, "shareCount": 0}
 

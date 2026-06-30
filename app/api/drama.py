@@ -20,8 +20,6 @@ def drama_list(
 ) -> dict[str, Any]:
     """获取短剧列表，支持分类过滤和分页。"""
     result = drama_service.list_dramas(category=category, page=page, page_size=page_size)
-    print(f"drama_list: category={category}, page={page}, page_size={page_size}, total={result['total']}")
-    print(f"  first item: {result['data'][0] if result['data'] else 'no data'}")
     return {"code": 0, "message": "success", "data": result}
 
 

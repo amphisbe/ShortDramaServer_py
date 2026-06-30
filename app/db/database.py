@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 from typing import Iterable
 
+from fastapi import FastAPI, Request
 from peewee import Database, MySQLDatabase, Proxy, SqliteDatabase
 from playhouse.pool import PooledMySQLDatabase
 
@@ -175,24 +176,40 @@ def _migrate_dramas() -> None:
 
 
 def initialize_runtime(create_schema: bool = False, seed: bool = False) -> None:
-    """项目一键初始化入口。
+    '''项目一键初始化入口。
 
-    该函数符合项目偏好的“一键初始化”方式：统一完成日志、配置、数据库代理、连接、建表与
-    可选种子数据。其他脚本、测试与 Web 入口都可以复用该函数。
+    使用 Peewee connection_context 管理连接生命周期，建表和种子数据
+    完成后自动释放连接。其他脚本、测试与 Web 入口都可以复用该函数。
+    '''
+
+    db = initialize_database()
+    with db.connection_context():
+        if create_schema:
+            from app.models import ALL_MODELS
+
+            create_tables(ALL_MODELS)
+            logger.info("数据库表结构已创建或已存在")
+
+        if seed:
+            from app.db.seed import seed_demo_data
+
+            seed_demo_data()
+            logger.info("Demo 种子数据已初始化")
+
+
+def setup_db_middleware(app: FastAPI) -> None:
+    """为每个 HTTP 请求添加数据库连接上下文管理。
+
+    使用 Peewee 的 connection_context：请求进入时从连接池获取连接，
+    请求结束后（正常或异常）自动释放回池，从根本上杜绝连接泄漏导致
+    的 MaxConnectionsExceeded。
     """
 
-    settings = get_settings()
-    initialize_database(settings)
-    connect_database()
-
-    if create_schema:
-        from app.models import ALL_MODELS
-
-        create_tables(ALL_MODELS)
-        logger.info("数据库表结构已创建或已存在")
-
-    if seed:
-        from app.db.seed import seed_demo_data
-
-        seed_demo_data()
-        logger.info("Demo 种子数据已初始化")
+    @app.middleware("http")
+    async def db_connection_middleware(request: Request, call_next):
+        db = database_proxy.obj
+        if db is None or db.is_closed():
+            db = initialize_database()
+        with db.connection_context():
+            response = await call_next(request)
+        return response

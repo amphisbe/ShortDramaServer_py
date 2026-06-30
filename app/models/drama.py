@@ -51,7 +51,7 @@ class Drama(BaseModel):
     lang = CharField(max_length=255, default="en")
     description = TextField(default="")
     category = CharField(max_length=50, default="推荐", index=True)
-    tags = TextField(default="[]")
+    tags = TextField(default="")
     display_author_name = CharField(max_length=100, default="")
     author_user = ForeignKeyField(User, backref="dramas", column_name="author_user_id")
     total_episodes = IntegerField(default=0)

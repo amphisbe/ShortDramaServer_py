@@ -66,7 +66,7 @@ def get_progress(user_id: str, drama_id: str) -> dict[str, Any]:
 @router.post("/user/{user_id}/like", summary="点赞/取消点赞")
 def toggle_like(
     user_id: str,
-    video_id: str = Body(...),
+    video_id: int = Body(...),
     is_like: bool = Body(default=False),
 ) -> dict[str, Any]:
     print(f"toggle_like: user_id={user_id}, video_id={video_id}, is_like={is_like}")
@@ -86,7 +86,7 @@ def check_liked(user_id: str, video_id: str) -> dict[str, Any]:
 @router.post("/user/{user_id}/favorite", summary="收藏/取消收藏短剧")
 def toggle_favorite(
     user_id: str,
-    video_id: str = Body(...),
+    video_id: int = Body(...),
     is_favorite: bool = Body(default=False),
 ) -> dict[str, Any]:
     """收藏或取消收藏短剧（toggle），返回最新状态和追剧数。"""
@@ -100,7 +100,7 @@ def toggle_favorite(
 @router.post("/user/{user_id}/share", summary="记录分享")
 def share_episode(
     user_id: str,
-    video_id: str = Body(...),
+    video_id: int = Body(...),
     channel: str = Body(default="unknown"),
 ) -> dict[str, Any]:
     """记录一次剧集分享事件，返回分享状态和最新分享数。"""

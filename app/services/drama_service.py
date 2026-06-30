@@ -359,7 +359,6 @@ def _build_episode_item(
 
     vip_text = "VIP免费" if drama.vip_free else "付费观看"
     total_text = f"全{drama.total_episodes}集" if drama.total_episodes else ""
-    print("-------------------", total_text)
     look_all_btn_text = episode.look_all_btn_text or (
         f"观看完整短剧1 · {total_text}" if total_text else ""
     )
@@ -377,6 +376,7 @@ def _build_episode_item(
         # "nickname": episode.display_nickname or author.nickname,
         "nickname": drama.title,
         "isfollow": is_follow,
+        "episodeId": episode.id,
         "videoId": episode.external_video_id,
         "playurl": _resolve_play_url(episode.play_url),
         "poster": episode.poster_url,

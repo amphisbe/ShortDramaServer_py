@@ -9,7 +9,7 @@ from app.api.drama import router as drama_router
 from app.api.user import router as user_router
 from app.core.config import get_settings
 from app.core.logging import setup_logging
-from app.db.database import close_database, initialize_runtime
+from app.db.database import close_database, initialize_runtime, setup_db_middleware
 
 import uvicorn
 
@@ -48,6 +48,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 数据库连接池中间件：每个 HTTP 请求自动获取/释放连接
+setup_db_middleware(app)
 
 app.include_router(video_router)
 app.include_router(drama_router)
