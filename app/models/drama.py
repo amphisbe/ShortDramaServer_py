@@ -48,6 +48,7 @@ class Drama(BaseModel):
     id = BigAutoField()
     external_drama_id = CharField(max_length=24, null=True, unique=True)
     title = CharField(max_length=255, default="")
+    lang = CharField(max_length=255, default="en")
     description = TextField(default="")
     category = CharField(max_length=50, default="推荐", index=True)
     tags = TextField(default="[]")
@@ -55,10 +56,12 @@ class Drama(BaseModel):
     author_user = ForeignKeyField(User, backref="dramas", column_name="author_user_id")
     total_episodes = IntegerField(default=0)
     cover_url = CharField(max_length=1024, default="")
+    banner_url = CharField(max_length=1024, default="")
     vip_free = BooleanField(default=True)
     play_count = BigIntegerField(default=0)
     follow_count = BigIntegerField(default=0)
     status = IntegerField(default=1, index=True)
+    hot = IntegerField(default=0)
 
     class Meta:
         table_name = "dramas"
@@ -113,7 +116,7 @@ class UserFollow(BaseModel):
     followed_user = ForeignKeyField(User, backref="followers", column_name="followed_user_id")
 
     class Meta:
-        table_name = "user_follows"
+        table_name = "users_follows"
         indexes = ((("follower_user", "followed_user"), True),)
 
 
@@ -123,7 +126,7 @@ class UserEpisodeLike(BaseModel):
     episode = ForeignKeyField(DramaEpisode, backref="user_likes", column_name="episode_id")
 
     class Meta:
-        table_name = "user_episode_likes"
+        table_name = "users_episode_likes"
         indexes = ((("user", "episode"), True),)
 
 
@@ -133,7 +136,7 @@ class UserDramaFavorite(BaseModel):
     drama = ForeignKeyField(Drama, backref="user_favorites", column_name="drama_id")
 
     class Meta:
-        table_name = "user_drama_favorites"
+        table_name = "users_drama_favorites"
         indexes = ((("user", "drama"), True),)
 
 
@@ -145,7 +148,7 @@ class UserEpisodeProgress(BaseModel):
     is_finished = BooleanField(default=False)
 
     class Meta:
-        table_name = "user_episode_progress"
+        table_name = "users_episode_progress"
         indexes = ((("user", "episode"), True),)
 
 

@@ -138,7 +138,7 @@ def save_progress(
     except Exception:
         return False
 
-    print(f"save_progress:::::::: user_id={external_user_id}, video_id={external_video_id}, position_seconds={position_seconds}, is_finished={is_finished}")
+    # print(f"save_progress:::::::: user_id={external_user_id}, video_id={external_video_id}, position_seconds={position_seconds}, is_finished={is_finished}")
     progress, _ = UserEpisodeProgress.get_or_create(
         user=user,
         episode=episode,

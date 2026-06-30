@@ -16,7 +16,7 @@ router = APIRouter(prefix="/api/v1/dramas", tags=["drama"])
 def drama_list(
     category: str = Query(default="推荐", description="分类筛选"),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=20, ge=1, le=50),
+    page_size: int = Query(default=20, ge=1, le=60),
 ) -> dict[str, Any]:
     """获取短剧列表，支持分类过滤和分页。"""
     result = drama_service.list_dramas(category=category, page=page, page_size=page_size)

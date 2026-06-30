@@ -25,6 +25,8 @@ from app.models import (
 
 
 from app.core.config import get_settings
+import logging
+logger = logging.getLogger(__name__)
 
 settings = get_settings()
 
@@ -43,12 +45,13 @@ def _load_tags(tags_json: str) -> list[str]:
 def _build_drama_item(drama: Drama) -> dict[str, Any]:
     """将 Drama 模型组装为前端需要的 JSON 格式。"""
     static_base = settings.static_img.rstrip("/")
-    cover = f"{static_base}/{drama.external_drama_id}.jpg"
+    cover = f"{static_base}/{drama.external_drama_id}/封面.jpg"
     return {
         "dramaId": drama.external_drama_id or str(drama.id),
         "title": drama.title,
         # "cover": drama.cover_url,
         "cover": cover,
+        "banner": drama.banner_url or "",
         "description": drama.description,
         "category": drama.category,
         "tags": _load_tags(drama.tags),
@@ -77,10 +80,10 @@ def list_dramas(
     page_size: int = 20,
 ) -> dict[str, Any]:
     """获取短剧列表（支持分类过滤）。"""
-    query = Drama.select().where(Drama.status == 1)
+    query = Drama.select().where(Drama.status == 1 and Drama.lang=='en')
 
-    if category and category != "推荐":
-        query = query.where(Drama.category == category)
+    # if category and category != "推荐":
+    #     query = query.where(Drama.category == category)
 
     total = query.count()
     page = max(page, 1)
@@ -113,9 +116,9 @@ def get_featured_drama() -> dict[str, Any] | None:
 
 def get_hot_dramas(category: str = "", count: int = 4) -> list[dict[str, Any]]:
     """获取热门短剧（按播放量排序）。"""
-    query = Drama.select().where(Drama.status == 1)
-    if category and category != "推荐":
-        query = query.where(Drama.category == category)
+    query = Drama.select().where(Drama.status == 1 and Drama.hot == 1)
+    # if category and category != "推荐":
+    #     query = query.where(Drama.category == category)
     rows = list(query.order_by(Drama.play_count.desc()).limit(count))
     return [_build_drama_item(d) for d in rows]
 
@@ -203,6 +206,12 @@ def get_drama_episodes(
         .order_by(DramaEpisode.sort_order.asc(), DramaEpisode.episode_no.asc())
     )
 
+    logger.info(
+        "短剧：%s, 集数：%d, 用户：%s",
+        drama_id, len(episodes), viewer_external_user_id
+    )
+    drama.total_episodes = len(episodes)
+
     if not episodes:
         return {"data": [], "found": True, "totalEpisodes": drama.total_episodes}
 
@@ -212,7 +221,9 @@ def get_drama_episodes(
     # 预取 viewer 状态
     liked_ids: set[int] = set()
     progress_map: dict[int, int] = {}
-    author: User = drama.author_user
+    logger
+    # author: User = drama.author_user
+    author = None
     is_follow = False
     if viewer_external_user_id:
         viewer = _get_viewer(viewer_external_user_id)
@@ -289,7 +300,7 @@ def _preload_viewer_state(
         UserFollow.select()
         .where(
             (UserFollow.follower_user == viewer)
-            & (UserFollow.followed_user == author)
+            # & (UserFollow.followed_user == author)
         )
         .exists()
     )
@@ -317,17 +328,18 @@ def _resolve_play_url(db_play_url: str) -> str:
     demo 模式下从 VIDEO_LIST 随机选取一个地址；
     其他模式直接返回数据库中的 play_url。
     """
+
     settings = get_settings()
     if settings.video_mode != "demo":
-        return db_play_url
+        return f"{settings.static_host}/{db_play_url}"
     
     raw = settings.video_list
     if not raw:
-        return db_play_url
+        return f"{settings.static_host}/{db_play_url}"
     
     urls = [u.strip() for u in raw.split(",") if u.strip()]
     if not urls:
-        return db_play_url
+        return f"{settings.static_host}/{db_play_url}"
     
     return random.choice(urls)
 
@@ -345,27 +357,33 @@ def _build_episode_item(
     if stat is None:
         stat = DramaEpisodeStat.get_or_create(episode=episode)[0]
 
-    vip_text = "vip免费" if drama.vip_free else "付费观看"
+    vip_text = "VIP免费" if drama.vip_free else "付费观看"
     total_text = f"全{drama.total_episodes}集" if drama.total_episodes else ""
+    print("-------------------", total_text)
     look_all_btn_text = episode.look_all_btn_text or (
-        f"观看完整短剧 · {total_text}" if total_text else ""
+        f"观看完整短剧1 · {total_text}" if total_text else ""
     )
     bottom_area_btn_text = episode.bottom_area_btn_text or (
-        f"选集 · {total_text} · {vip_text}" if total_text else ""
+        f"{total_text} · {vip_text}" if total_text else ""
     )
 
-
+    # look_all_btn_text = ''
 
     return {
-        "userId": author.external_user_id,
-        "avatar": author.avatar_url,
-        "nickname": episode.display_nickname or author.nickname,
+        # "userId": author.external_user_id,
+        # "avatar": author.avatar_url,
+        "userId": -1,
+        "avatar": '',
+        # "nickname": episode.display_nickname or author.nickname,
+        "nickname": drama.title,
         "isfollow": is_follow,
         "videoId": episode.external_video_id,
         "playurl": _resolve_play_url(episode.play_url),
         "poster": episode.poster_url,
-        "vduser": drama.display_author_name or author.nickname,
-        "vdtitle": episode.title,
+        # "vduser": drama.display_author_name or author.nickname,
+        "vduser": "Author",
+        # "vdtitle": episode.title,
+        "vdtitle": f"第 {episode.episode_no} 集",
         "loop": episode.loop,
         "duration": episode.duration_seconds,
         "playIng": episode.play_ing,
@@ -391,9 +409,9 @@ def _load_tool_info(
 ) -> list[dict[str, Any]]:
     if not raw_json:
         return [
-            {"icon": "shoucang", "text": "追剧"},
-            {"icon": "dianzan", "num": like_count, "text": "点赞"},
-            {"icon": "share", "text": "分享"},
+            {"icon": "shoucang", "text": "Favorite"},
+            {"icon": "dianzan", "num": like_count, "text": "Like"},
+            {"icon": "share", "text": "Share"},
         ]
     try:
         value = json.loads(raw_json)
@@ -402,7 +420,7 @@ def _load_tool_info(
     except (json.JSONDecodeError, TypeError):
         pass
     return [
-        {"icon": "shoucang", "text": "追剧"},
-        {"icon": "dianzan", "num": like_count, "text": "点赞"},
-        {"icon": "share", "text": "分享"},
+        {"icon": "shoucang", "text": "Favorite"},
+        {"icon": "dianzan", "num": like_count, "text": "Like"},
+        {"icon": "share", "text": "Share"},
     ]

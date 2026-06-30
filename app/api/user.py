@@ -49,7 +49,7 @@ def save_progress(
     position: int = Body(default=0),
     is_finished: bool = Body(default=False),
 ) -> dict[str, Any]:
-    print(f"save_progress: user_id={user_id}, video_id={video_id}, position={position}, is_finished={is_finished}")
+    # print(f"save_progress: user_id={user_id}, video_id={video_id}, position={position}, is_finished={is_finished}")
     ok = user_service.save_progress(user_id, video_id, position, is_finished)
     return {"code": 0 if ok else 404, "message": "ok" if ok else "用户或剧集不存在"}
 

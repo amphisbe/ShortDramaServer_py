@@ -97,9 +97,9 @@ PYTHONPATH=. uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 | `drama_episodes` | `DramaEpisode` | 短剧分集数据，如播放地址、海报、标题和排序。 |
 | `drama_episode_stats` | `DramaEpisodeStat` | 分集点赞、评论、分享、播放、收藏等计数。 |
 | `user_follows` | `UserFollow` | 用户关注关系。 |
-| `user_episode_likes` | `UserEpisodeLike` | 用户对分集的点赞关系。 |
-| `user_drama_favorites` | `UserDramaFavorite` | 用户追剧、收藏关系。 |
-| `user_episode_progress` | `UserEpisodeProgress` | 用户播放进度。 |
+| `users_episode_likes` | `UserEpisodeLike` | 用户对分集的点赞关系。 |
+| `users_drama_favorites` | `UserDramaFavorite` | 用户追剧、收藏关系。 |
+| `users_episode_progress` | `UserEpisodeProgress` | 用户播放进度。 |
 | `episode_comments` | `EpisodeComment` | 分集评论。 |
 | `episode_shares` | `EpisodeShare` | 分集分享记录。 |
 

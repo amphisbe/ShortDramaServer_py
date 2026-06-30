@@ -27,9 +27,9 @@ def get_viewer_by_external_id(external_user_id: str | None) -> User | None:
 
 def _build_default_tool_info(like_count: int) -> list[dict[str, Any]]:
     return [
-        {"icon": "shoucang", "text": "追剧"},
-        {"icon": "dianzan", "num": like_count, "text": "点赞"},
-        {"icon": "share", "text": "分享"},
+        {"icon": "shoucang", "text": "Favorite"},
+        {"icon": "dianzan", "num": like_count, "text": "Like"},
+        {"icon": "share", "text": "Share"},
     ]
 
 
@@ -129,13 +129,13 @@ def build_play_item(
         except DoesNotExist:
             position = 0
 
-    vip_text = "vip免费" if drama.vip_free else "付费观看"
+    vip_text = "VIP免费" if drama.vip_free else "付费观看"
     total_text = f"全{drama.total_episodes}集" if drama.total_episodes else ""
     look_all_btn_text = episode.look_all_btn_text or (
-        f"观看完整短剧 · {total_text}" if total_text else ""
+        f"观看完整短剧2 · {total_text}" if total_text else ""
     )
     bottom_area_btn_text = episode.bottom_area_btn_text or (
-        f"选集 · {total_text} · {vip_text}" if total_text else ""
+        f"{total_text} · {vip_text}" if total_text else ""
     )
 
     return {

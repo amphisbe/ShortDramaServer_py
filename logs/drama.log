@@ -178,3 +178,384 @@ OSError: [WinError 64] 指定的网络名不再可用。
 2026-06-11 16:00:47 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
 2026-06-11 16:00:47 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
 2026-06-11 16:00:47 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-26 21:29:01 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-26 21:29:01 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-26 21:29:01 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-26 22:29:15 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-26 22:29:15 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-26 22:29:15 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-26 23:19:58 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-26 23:19:58 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-26 23:19:58 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-26 23:19:58 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-26 23:20:00 [INFO] app.db.database - Demo 种子数据已初始化
+2026-06-27 14:29:16 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-27 14:29:16 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-27 14:29:16 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-27 14:29:34 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-27 14:29:34 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-27 14:29:34 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-27 14:29:34 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-27 14:29:35 [INFO] app.db.database - Demo 种子数据已初始化
+2026-06-28 09:59:51 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-28 09:59:51 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-28 09:59:51 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-28 10:00:12 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-28 10:00:12 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-28 10:00:12 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-28 10:00:12 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-28 10:00:14 [INFO] app.db.database - Demo 种子数据已初始化
+2026-06-28 10:10:22 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-28 10:10:22 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-28 10:10:22 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-28 10:10:22 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-28 10:24:54 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-28 10:24:54 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-28 10:24:54 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-28 10:24:54 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-28 12:26:48 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-28 12:26:48 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-28 12:26:48 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-28 12:27:11 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-28 12:27:11 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-28 12:27:11 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-28 12:27:19 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-28 12:27:19 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-28 12:27:19 [INFO] app.db.database - 数据库代理已初始化，driver=sqlite
+2026-06-28 12:27:20 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-29 19:54:25 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-29 19:54:25 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-29 19:54:25 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-29 19:54:53 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-29 19:54:53 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-29 19:54:53 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-29 20:23:48 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-29 20:23:48 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-29 20:23:48 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-29 20:24:21 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-29 20:24:21 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-29 20:24:21 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-29 21:32:26 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-29 21:32:26 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-29 21:32:26 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-29 21:35:42 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-29 21:35:42 [INFO] app.main - 启动 ShortDrama 服务，监听 10.255.255.254:9011
+2026-06-29 21:35:42 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-29 21:36:04 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-29 21:36:04 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-29 21:36:04 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-29 21:36:31 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-29 21:36:31 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-29 21:36:31 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-29 21:50:45 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-29 21:50:45 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-29 21:50:45 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-29 21:53:05 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-29 21:53:05 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-29 21:53:05 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-29 21:53:53 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-29 21:53:53 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-29 21:53:53 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-29 22:20:19 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-29 22:20:19 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-29 22:20:19 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-29 22:21:18 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-29 22:21:18 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-29 22:21:18 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-29 22:34:32 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-29 22:34:32 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-29 22:34:32 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 00:00:34 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-30 00:00:34 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 00:00:34 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 00:01:33 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-30 00:01:33 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 00:01:33 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 00:01:33 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 09:18:47 [INFO] app.core.logging - 日志系统已初始化，日志文件：/mnt/d/wangs/workspace/python/ShortDramaServer_py/logs/drama.log，级别：INFO
+2026-06-30 09:18:47 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 09:18:47 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 09:18:47 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 09:36:20 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 09:36:20 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 09:36:20 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 09:36:20 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 11:44:39 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 11:44:39 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 11:44:39 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 11:44:39 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 12:01:22 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 12:01:22 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 12:01:22 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 12:01:22 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 12:01:41 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 12:04:24 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 12:36:12 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 12:36:12 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 12:36:12 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 12:36:13 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 12:36:34 [INFO] app.services.drama_service - 短剧：06YMZ1tgxl, 集数：50, 用户：None
+2026-06-30 12:45:05 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 12:45:05 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 12:45:05 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 12:45:06 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 12:46:58 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 12:46:58 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 12:46:58 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 12:46:58 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 12:53:40 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 12:53:40 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 12:53:40 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 12:53:41 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 12:53:56 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 12:54:20 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 12:54:20 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 12:54:20 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 12:54:20 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 12:54:25 [INFO] app.services.drama_service - 短剧：06YMZ1tgxl, 集数：50, 用户：None
+2026-06-30 12:56:09 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 12:56:09 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 12:56:09 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 12:56:10 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 12:56:15 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 12:58:30 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 12:58:30 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 12:58:30 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 12:58:30 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 12:58:35 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_001.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_002.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_003.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_004.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_005.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_006.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_007.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_008.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_009.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_010.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_011.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_012.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_013.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_014.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_015.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_016.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_017.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_018.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_019.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_020.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_021.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_022.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_023.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_024.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_025.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_026.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_027.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_028.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_029.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_030.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_031.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_032.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_033.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_034.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_035.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_036.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_037.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_038.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_039.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_040.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_041.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_042.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_043.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_044.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_045.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_046.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_047.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_048.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_049.mp4
+2026-06-30 12:58:35 [INFO] app.services.drama_service - play url: VwGINZ0OrP/ep_050.mp4
+2026-06-30 13:01:47 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 13:01:47 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 13:01:47 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 13:01:48 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 13:02:03 [INFO] app.services.drama_service - 短剧：LE22JaNRxm, 集数：60, 用户：None
+2026-06-30 13:03:07 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 13:03:07 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 13:03:07 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 13:03:08 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 13:04:21 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 13:46:12 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 13:46:12 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 13:46:12 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 13:46:12 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 13:46:32 [INFO] app.services.drama_service - 短剧：ciqJt2ZQHH, 集数：50, 用户：None
+2026-06-30 13:48:05 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 13:48:05 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 13:48:05 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 13:48:05 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 13:51:33 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 13:51:33 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 13:51:33 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 13:51:34 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 13:51:42 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 14:08:11 [INFO] app.services.drama_service - 短剧：LE22JaNRxm, 集数：60, 用户：None
+2026-06-30 14:09:19 [INFO] app.services.drama_service - 短剧：LE22JaNRxm, 集数：60, 用户：None
+2026-06-30 14:11:16 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 14:20:46 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 14:20:46 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 14:20:46 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 14:20:47 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 14:21:40 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 14:21:40 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 14:21:40 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 14:21:41 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 14:22:08 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 14:22:08 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 14:22:08 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 14:22:08 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 14:22:32 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 14:22:32 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 14:22:32 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 14:22:32 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 14:23:28 [INFO] app.services.drama_service - 短剧：06YMZ1tgxl, 集数：50, 用户：None
+2026-06-30 14:36:09 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 14:37:47 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 14:37:47 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 14:37:47 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 14:37:47 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 14:37:55 [INFO] app.services.drama_service - 短剧：LE22JaNRxm, 集数：60, 用户：None
+2026-06-30 14:37:59 [INFO] app.services.drama_service - 短剧：ciqJt2ZQHH, 集数：50, 用户：None
+2026-06-30 14:47:22 [INFO] app.services.drama_service - 短剧：LE22JaNRxm, 集数：60, 用户：None
+2026-06-30 14:47:53 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 14:47:53 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 14:47:53 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 14:47:53 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 14:48:19 [INFO] app.services.drama_service - 短剧：LE22JaNRxm, 集数：60, 用户：None
+2026-06-30 14:49:06 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 14:51:58 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 14:51:58 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 14:51:58 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 14:51:58 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 14:52:37 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 14:52:57 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 15:12:16 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 15:12:55 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 15:15:06 [INFO] app.services.drama_service - 短剧：ciqJt2ZQHH, 集数：50, 用户：None
+2026-06-30 15:16:36 [INFO] app.services.drama_service - 短剧：06YMZ1tgxl, 集数：50, 用户：None
+2026-06-30 15:17:40 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 15:17:40 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 15:17:40 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 15:17:41 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 15:17:50 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 15:20:25 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 15:21:25 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 15:22:24 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 15:30:39 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 15:47:08 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 15:51:19 [INFO] app.services.drama_service - 短剧：ciqJt2ZQHH, 集数：50, 用户：None
+2026-06-30 15:53:39 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 15:54:11 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 16:01:34 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 16:01:34 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 16:01:34 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 16:01:34 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 16:01:48 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 16:02:09 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 16:02:09 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 16:02:09 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 16:02:09 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 16:03:53 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 16:08:14 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 16:21:13 [INFO] app.services.drama_service - 短剧：LE22JaNRxm, 集数：60, 用户：None
+2026-06-30 16:27:31 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 16:30:33 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 16:48:18 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 17:21:27 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 17:25:14 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 17:26:37 [INFO] app.services.drama_service - 短剧：LE22JaNRxm, 集数：60, 用户：None
+2026-06-30 17:31:43 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 17:31:43 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 17:31:43 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 17:31:43 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 17:33:02 [INFO] app.services.drama_service - 短剧：ciqJt2ZQHH, 集数：50, 用户：None
+2026-06-30 17:35:35 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 17:35:35 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 17:35:35 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 17:35:36 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 17:35:42 [INFO] app.services.drama_service - 短剧：ciqJt2ZQHH, 集数：50, 用户：None
+2026-06-30 17:37:14 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 17:41:06 [INFO] app.services.drama_service - 短剧：ciqJt2ZQHH, 集数：50, 用户：None
+2026-06-30 17:55:59 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 17:56:14 [INFO] app.services.drama_service - 短剧：ciqJt2ZQHH, 集数：50, 用户：None
+2026-06-30 18:28:20 [INFO] app.services.drama_service - 短剧：LE22JaNRxm, 集数：60, 用户：None
+2026-06-30 18:32:53 [INFO] app.services.drama_service - 短剧：ciqJt2ZQHH, 集数：50, 用户：None
+2026-06-30 18:33:25 [INFO] app.services.drama_service - 短剧：ciqJt2ZQHH, 集数：50, 用户：None
+2026-06-30 18:33:42 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 18:33:46 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 18:35:25 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 18:35:28 [INFO] app.services.drama_service - 短剧：ZQnUgtLcSZ, 集数：32, 用户：None
+2026-06-30 18:35:37 [INFO] app.services.drama_service - 短剧：06YMZ1tgxl, 集数：50, 用户：None
+2026-06-30 19:35:58 [INFO] app.services.drama_service - 短剧：6jep_bu_xc, 集数：50, 用户：None
+2026-06-30 19:38:35 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 19:38:35 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 19:38:35 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 19:38:35 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 19:43:15 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 19:43:15 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 19:43:15 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 19:43:16 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 19:44:39 [INFO] app.services.drama_service - 短剧：KPV4jpDNge, 集数：60, 用户：None
+2026-06-30 19:47:25 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 19:47:25 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 19:47:25 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 19:47:26 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 19:54:04 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 19:54:04 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 19:54:04 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 19:54:04 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 20:04:32 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 20:04:32 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 20:04:32 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 20:04:32 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 20:08:45 [INFO] app.services.drama_service - 短剧：KPV4jpDNge, 集数：60, 用户：None
+2026-06-30 20:08:57 [INFO] app.services.drama_service - 短剧：KPV4jpDNge, 集数：60, 用户：None
+2026-06-30 20:09:01 [INFO] app.services.drama_service - 短剧：QUQ4LRY5o1, 集数：55, 用户：None
+2026-06-30 20:11:13 [INFO] app.services.drama_service - 短剧：-l5wQEQL__, 集数：59, 用户：None
+2026-06-30 20:12:21 [INFO] app.services.drama_service - 短剧：-l5wQEQL__, 集数：59, 用户：None
+2026-06-30 20:15:51 [INFO] app.services.drama_service - 短剧：-l5wQEQL__, 集数：59, 用户：None
+2026-06-30 20:16:49 [INFO] app.services.drama_service - 短剧：-l5wQEQL__, 集数：59, 用户：None
+2026-06-30 20:23:10 [INFO] app.services.drama_service - 短剧：-l5wQEQL__, 集数：59, 用户：None
+2026-06-30 20:23:21 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 20:23:21 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 20:23:21 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 20:23:22 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 20:24:13 [INFO] app.services.drama_service - 短剧：VwGINZ0OrP, 集数：50, 用户：None
+2026-06-30 20:24:26 [INFO] app.services.drama_service - 短剧：QUQ4LRY5o1, 集数：55, 用户：None
+2026-06-30 20:25:50 [INFO] app.services.drama_service - 短剧：QUQ4LRY5o1, 集数：55, 用户：None
+2026-06-30 20:39:49 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 20:39:49 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 20:39:49 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 20:39:49 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 20:51:53 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 20:51:53 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 20:51:53 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 20:51:54 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 21:12:11 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 21:12:11 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 21:12:11 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 21:12:11 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 21:14:41 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 21:14:41 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 21:14:41 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 21:14:42 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 21:18:35 [INFO] app.services.drama_service - 短剧：oPqZfkjg72, 集数：74, 用户：None
+2026-06-30 21:20:52 [INFO] app.services.drama_service - 短剧：oPqZfkjg72, 集数：74, 用户：None
+2026-06-30 21:21:12 [INFO] app.services.drama_service - 短剧：QUQ4LRY5o1, 集数：55, 用户：None
+2026-06-30 21:22:15 [INFO] app.services.drama_service - 短剧：KPV4jpDNge, 集数：60, 用户：None
+2026-06-30 21:23:04 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 21:23:04 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 21:23:04 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 21:23:05 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-06-30 23:03:53 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-06-30 23:03:53 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-06-30 23:03:53 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-06-30 23:03:53 [INFO] app.db.database - 数据库表结构已创建或已存在
