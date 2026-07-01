@@ -75,6 +75,7 @@ class DramaEpisode(BaseModel):
     title = CharField(max_length=500, default="")
     play_url = CharField(max_length=1024)
     poster_url = CharField(max_length=1024, default="")
+    subtitle_url = CharField(max_length=1024, default="")
     duration_seconds = IntegerField(default=0)
     sort_order = IntegerField(default=0, index=True)
     status = IntegerField(default=1, index=True)

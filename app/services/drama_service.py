@@ -357,10 +357,10 @@ def _build_episode_item(
     if stat is None:
         stat = DramaEpisodeStat.get_or_create(episode=episode)[0]
 
-    vip_text = "VIP免费" if drama.vip_free else "付费观看"
-    total_text = f"全{drama.total_episodes}集" if drama.total_episodes else ""
+    vip_text = "VIP Free" if drama.vip_free else "付费观看"
+    total_text = f"All {drama.total_episodes} Episodes" if drama.total_episodes else ""
     look_all_btn_text = episode.look_all_btn_text or (
-        f"观看完整短剧1 · {total_text}" if total_text else ""
+        f"观看完整短剧 · {total_text}" if total_text else ""
     )
     bottom_area_btn_text = episode.bottom_area_btn_text or (
         f"{total_text} · {vip_text}" if total_text else ""
@@ -379,11 +379,17 @@ def _build_episode_item(
         "episodeId": episode.id,
         "videoId": episode.external_video_id,
         "playurl": _resolve_play_url(episode.play_url),
+        "duration": episode.duration_seconds,
         "poster": episode.poster_url,
         # "vduser": drama.display_author_name or author.nickname,
         "vduser": "Author",
         # "vdtitle": episode.title,
-        "vdtitle": f"第 {episode.episode_no} 集",
+        # "vdtitle": f"第 {episode.episode_no} 集",
+        "vdtitle": "",
+        "subtitleUrl": _resolve_play_url(episode.subtitle_url),
+        "subtitleFormat": "srt",
+        "subtitleLang": "en",
+        "subtitleEnabled": episode.subtitle_url != "",
         "loop": episode.loop,
         "duration": episode.duration_seconds,
         "playIng": episode.play_ing,
@@ -395,7 +401,8 @@ def _build_episode_item(
         "isPlaying": episode.is_playing,
         "position": position,
         "showTitleArrow": episode.show_title_arrow,
-        "showLookAllBtn": episode.show_look_all_btn,
+        # "showLookAllBtn": episode.show_look_all_btn,
+        "showLookAllBtn": False,
         "lookAllBtnText": look_all_btn_text,
         "total": drama.total_episodes,
         "showBottomArea": episode.show_bottom_area,
