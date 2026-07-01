@@ -5,6 +5,10 @@ from typing import Literal
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+from dotenv import load_dotenv
+load_dotenv(_PROJECT_ROOT / ".env", override=True)
+
 
 class Settings(BaseSettings):
     """应用运行配置。
@@ -39,7 +43,7 @@ class Settings(BaseSettings):
     video_list: str = Field(default="", alias="VIDEO_LIST")
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=str(_PROJECT_ROOT / ".env"),
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",
@@ -52,4 +56,14 @@ class Settings(BaseSettings):
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
-    return Settings()
+    s = Settings()
+    # 启动时打印关键配置，便于排查是否读到了错误的 .env 或环境变量
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.info(
+        "配置加载完成: DB_DRIVER=%s, MYSQL_HOST=%s, MYSQL_PORT=%s, MYSQL_DATABASE=%s, "
+        "APP_PORT=%s, VIDEO_MODE=%s, env_file=%s",
+        s.db_driver, s.mysql_host, s.mysql_port, s.mysql_database,
+        s.app_port, s.video_mode, _PROJECT_ROOT / ".env",
+    )
+    return s

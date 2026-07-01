@@ -2,7 +2,6 @@ import logging
 from pathlib import Path
 from typing import Iterable
 
-from fastapi import FastAPI, Request
 from peewee import Database, MySQLDatabase, Proxy, SqliteDatabase
 from playhouse.pool import PooledMySQLDatabase
 
@@ -195,21 +194,3 @@ def initialize_runtime(create_schema: bool = False, seed: bool = False) -> None:
 
             seed_demo_data()
             logger.info("Demo 种子数据已初始化")
-
-
-def setup_db_middleware(app: FastAPI) -> None:
-    """为每个 HTTP 请求添加数据库连接上下文管理。
-
-    使用 Peewee 的 connection_context：请求进入时从连接池获取连接，
-    请求结束后（正常或异常）自动释放回池，从根本上杜绝连接泄漏导致
-    的 MaxConnectionsExceeded。
-    """
-
-    @app.middleware("http")
-    async def db_connection_middleware(request: Request, call_next):
-        db = database_proxy.obj
-        if db is None or db.is_closed():
-            db = initialize_database()
-        with db.connection_context():
-            response = await call_next(request)
-        return response
