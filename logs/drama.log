@@ -1192,3 +1192,9 @@ OSError: [WinError 64] 指定的网络名不再可用。
 2026-10-18 23:53:25 [INFO] app.services.drama_service - 短剧：-ywZjnpi08, 集数：60, 用户：user_2a2e7f8d31912e4189
 2026-10-19 00:03:28 [INFO] app.services.drama_service - 短剧：-ywZjnpi08, 集数：60, 用户：user_2a2e7f8d31912e4189
 2026-10-19 00:03:34 [INFO] app.services.drama_service - 短剧：-ywZjnpi08, 集数：60, 用户：user_2a2e7f8d31912e4189
+2026-10-19 01:23:19 [INFO] app.core.logging - 日志系统已初始化，日志文件：D:\wangs\workspace\python\ShortDramaServer_py\logs\drama.log，级别：INFO
+2026-10-19 01:23:19 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
+2026-10-19 01:23:19 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
+2026-10-19 01:23:32 [INFO] app.db.database - 已补齐 dramas.real_play_count 字段
+2026-10-19 01:23:33 [INFO] app.db.database - 已补齐 drama_episode_stats.real_play_count 字段
+2026-10-19 01:23:39 [INFO] app.db.database - 数据库表结构已创建或已存在
