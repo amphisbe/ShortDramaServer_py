@@ -61,6 +61,8 @@ def _build_drama_item(drama: Drama) -> dict[str, Any]:
         "totalEpisodes": drama.total_episodes,
         "updatedEpisodes": drama.total_episodes,
         "playCount": _format_count(drama.play_count),
+        # 真实播放量（观看统计递增，不含种子假值）
+        "realPlayCount": int(getattr(drama, "real_play_count", 0) or 0),
         "followCount": _format_count(drama.follow_count),
         "isFinished": drama.status == 2,
     }
@@ -731,6 +733,7 @@ def _build_episode_item(
         "isFavorite": is_favorite,
         "commemtSum": stat.comment_count,
         "shareSum": stat.share_count,
+        "realPlayCount": int(getattr(stat, "real_play_count", 0) or 0),
         "isPlaying": episode.is_playing,
         "position": position,
         "showTitleArrow": episode.show_title_arrow,

@@ -11,6 +11,7 @@ from app.api.drama import router as drama_router
 from app.api.user import router as user_router
 from app.api.tags import router as tags_router
 from app.api.for_you import router as for_you_router
+from app.api.watch import router as watch_router
 from app.core.config import get_settings
 from app.core.logging import setup_logging
 from app.core.security import ApiAuthError
@@ -23,6 +24,21 @@ settings = get_settings()
 logger = logging.getLogger(__name__)
 
 
+def _cleanup_stale_watch_sessions() -> None:
+    """启动时删除 30 天未活动的观看会话（docs/watch-time-statistics-design.md 6.3），失败不影响启动。"""
+    from app.db.database import initialize_database
+    from app.services.watch_service import cleanup_stale_sessions
+
+    try:
+        db = initialize_database()
+        with db.connection_context():
+            removed = cleanup_stale_sessions()
+        if removed:
+            logger.info("已清理过期观看会话 %d 条", removed)
+    except Exception as exc:
+        logger.warning("清理过期观看会话失败：%s", exc)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # 在 lifespan 入口初始化日志，确保应用启动时日志系统就绪
@@ -31,6 +47,7 @@ async def lifespan(app: FastAPI):
 
     # Demo 启动时自动建表；真实生产环境建议改为显式迁移脚本。
     initialize_runtime(create_schema=True, seed=False)
+    _cleanup_stale_watch_sessions()
     try:
         yield
     finally:
@@ -70,6 +87,7 @@ app.include_router(user_router)
 app.include_router(auth_router)
 app.include_router(tags_router)
 app.include_router(for_you_router)
+app.include_router(watch_router)
 
 
 @app.get("/health", tags=["system"], summary="健康检查")

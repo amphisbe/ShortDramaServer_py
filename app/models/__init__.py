@@ -12,6 +12,12 @@ from app.models.drama import (
 )
 
 from app.models.tag import Tag, TagTranslation, TagAlias, UserTagWeight, TAG_MODELS
+from app.models.watch import (
+    UserEpisodeWatchDaily,
+    UserWatchDaily,
+    UserWatchSession,
+    WATCH_MODELS,
+)
 
 ALL_MODELS = [
     User,
@@ -24,7 +30,7 @@ ALL_MODELS = [
     UserEpisodeProgress,
     EpisodeComment,
     EpisodeShare,
-] + TAG_MODELS
+] + TAG_MODELS + WATCH_MODELS
 
 __all__ = [
     "ALL_MODELS",
@@ -42,4 +48,7 @@ __all__ = [
     "TagTranslation",
     "TagAlias",
     "UserTagWeight",
+    "UserWatchSession",
+    "UserEpisodeWatchDaily",
+    "UserWatchDaily",
 ]

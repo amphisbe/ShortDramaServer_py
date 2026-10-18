@@ -327,3 +327,13 @@ def backfill_drama_tags(apply=False):
             state, data = assess(current)
             record(current, state, data, True)
     return report
+
+
+def apply_watch_contribution(user, drama, credited_seconds, now):
+    """观看贡献钩子（For You 设计 5/6 节）。
+
+    watch_service.report_event 在同一事务内、credited_seconds > 0 时调用，保证重试不重复加权。
+    一期为空实现：贡献时长已落库 user_episode_watch_daily.credited_ms；
+    二期在此实现标签权重衰减累加 + tag_daily_stats。
+    """
+    return None

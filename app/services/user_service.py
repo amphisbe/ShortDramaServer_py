@@ -13,6 +13,8 @@ from app.models import (
 )
 
 from app.db.database import initialize_database
+from app.models.drama import _utcnow
+from app.services import watch_service
 from app.services.drama_service import _build_drama_item
 
 
@@ -56,6 +58,8 @@ def get_user_profile(external_user_id: str) -> dict | None:
         "favoritesCount": favorites_count,
         "watchedCount": watched_count,
         "followingCount": following_count,
+        # 真实观看时长（秒，1 位小数）；watchedCount 仍为 is_finished 口径
+        **watch_service.get_user_watch_totals(user),
     }
 
 
@@ -133,7 +137,6 @@ def save_progress(
     db = initialize_database()
     with db.atomic():
         user = get_user_by_external_id(external_user_id)
-        print("user:", user)
         if user is None:
             return False
         try:
@@ -142,14 +145,24 @@ def save_progress(
             return False
 
         # print(f"save_progress:::::::: user_id={external_user_id}, video_id={external_video_id}, position_seconds={position_seconds}, is_finished={is_finished}")
-        progress, _ = UserEpisodeProgress.get_or_create(
+        position = max(0, int(position_seconds or 0))
+        # 并发首写：INSERT IGNORE / INSERT OR IGNORE 保证行存在，避免 get_or_create 的 1062
+        UserEpisodeProgress.insert(
             user=user,
             episode=episode,
-            defaults={"position_seconds": position_seconds, "is_finished": is_finished},
-        )
-        progress.position_seconds = max(progress.position_seconds, position_seconds)
-        progress.is_finished = progress.is_finished or is_finished
-        progress.save()
+            position_seconds=position,
+            is_finished=bool(is_finished),
+        ).on_conflict_ignore().execute()
+        # 续播位置取最新上报值（不再取历史最大值）；is_finished 置位后不回退
+        values = {
+            UserEpisodeProgress.position_seconds: position,
+            UserEpisodeProgress.updated_at: _utcnow(),
+        }
+        if is_finished:
+            values[UserEpisodeProgress.is_finished] = True
+        UserEpisodeProgress.update(values).where(
+            (UserEpisodeProgress.user == user) & (UserEpisodeProgress.episode == episode)
+        ).execute()
     return True
 
 
@@ -180,7 +193,8 @@ def get_progress(external_user_id: str, drama_id: str) -> dict:
             "episodeNo": p.episode.episode_no,
             "positionSeconds": p.position_seconds,
             "isFinished": p.is_finished,
-            "updatedAt": p.updated_at.isoformat() if p.updated_at else None,
+            # SQLite 下带时区的 DateTimeField 可能以字符串读回
+            "updatedAt": p.updated_at.isoformat() if hasattr(p.updated_at, "isoformat") else (p.updated_at or None),
         })
     return {"data": result}
 
@@ -200,7 +214,6 @@ def toggle_like(
     db = initialize_database()
     with db.atomic():
         user = get_user_by_external_id(external_user_id)
-        print("toggle_like user:", user)
         if user is None:
             return {"liked": False, "likeCount": 0}
 
@@ -264,7 +277,6 @@ def toggle_favorite(
     """
     db = initialize_database()
     with db.atomic():
-        print('favorite:::::::::', external_user_id, external_video_id)
         user = get_user_by_external_id(external_user_id)
         if user is None:
             return {"favorited": False, "followCount": 0}

@@ -67,6 +67,8 @@ class Drama(BaseModel):
     banner_url = CharField(max_length=1024, default="")
     vip_free = BooleanField(default=True)
     play_count = BigIntegerField(default=0)
+    # 真实播放量（各集真实播放之和），与种子假值 play_count 分开存，仅由观看统计递增
+    real_play_count = BigIntegerField(default=0)
     follow_count = BigIntegerField(default=0)
     status = IntegerField(default=1, index=True)
     hot = IntegerField(default=0)
@@ -113,6 +115,8 @@ class DramaEpisodeStat(BaseModel):
     comment_count = IntegerField(default=0)
     share_count = IntegerField(default=0)
     play_count = BigIntegerField(default=0)
+    # 真实播放量（同一用户·分集·UTC 日去重），仅由观看统计递增
+    real_play_count = BigIntegerField(default=0)
     favorite_count = IntegerField(default=0)
 
     class Meta:

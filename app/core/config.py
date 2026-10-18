@@ -48,6 +48,22 @@ class Settings(BaseSettings):
     # 管理接口（/api/v1/admin/*）令牌，请求头 X-Admin-Token；为空时管理接口禁用
     admin_token: str = Field(default="", alias="ADMIN_TOKEN")
 
+    # 真实观看时长统计（docs/watch-time-statistics-design.md）
+    # 会话签名密钥，为空时复用 JWT_SECRET
+    watch_session_secret: str = Field(default="", alias="WATCH_SESSION_SECRET")
+    # 关闭时 watch 接口返回 code 0 且增量 0
+    watch_events_enabled: bool = Field(default=True, alias="WATCH_EVENTS_ENABLED")
+    # 同一用户·分集·UTC 日累计观看达到 min(该值, 分集时长) 秒计一次播放
+    watch_play_threshold_seconds: int = Field(default=5, alias="WATCH_PLAY_THRESHOLD_SECONDS")
+    # 分集时长未知（duration_seconds=0）时的当集日上限
+    watch_unknown_duration_cap_seconds: int = Field(default=1800, alias="WATCH_UNKNOWN_DURATION_CAP_SECONDS")
+    watch_user_daily_cap_seconds: int = Field(default=43200, alias="WATCH_USER_DAILY_CAP_SECONDS")
+    # 会话超过该秒数无上报即过期（410）
+    watch_session_idle_seconds: int = Field(default=1800, alias="WATCH_SESSION_IDLE_SECONDS")
+    watch_session_max_age_seconds: int = Field(default=21600, alias="WATCH_SESSION_MAX_AGE_SECONDS")
+    # 单进程内存限流：同一用户每分钟最多创建会话数
+    watch_session_create_per_min: int = Field(default=30, alias="WATCH_SESSION_CREATE_PER_MIN")
+
     model_config = SettingsConfigDict(
         env_file=str(_PROJECT_ROOT / ".env"),
         env_file_encoding="utf-8",

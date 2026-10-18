@@ -13,6 +13,7 @@ from google.oauth2 import id_token as google_id_token
 from app.core.config import get_settings
 from app.db.database import initialize_database
 from app.models import User, UserDramaFavorite, UserEpisodeProgress
+from app.services import watch_service
 
 
 settings = get_settings()
@@ -141,6 +142,8 @@ def _format_auth_user(user: User) -> dict[str, Any]:
         "watchedCount": watched_count,
         "favoriteCount": favorite_count,
         "downloadCount": 0,
+        # 真实观看时长（秒，1 位小数），与 user_service.get_user_profile 同一口径
+        **watch_service.get_user_watch_totals(user),
     }
 
 

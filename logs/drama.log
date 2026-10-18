@@ -1189,3 +1189,6 @@ OSError: [WinError 64] 指定的网络名不再可用。
 2026-10-18 23:13:28 [INFO] app.main - 启动 ShortDrama 服务，监听 0.0.0.0:9011
 2026-10-18 23:13:28 [INFO] app.db.database - 数据库代理已初始化，driver=mysql
 2026-10-18 23:13:46 [INFO] app.db.database - 数据库表结构已创建或已存在
+2026-10-18 23:53:25 [INFO] app.services.drama_service - 短剧：-ywZjnpi08, 集数：60, 用户：user_2a2e7f8d31912e4189
+2026-10-19 00:03:28 [INFO] app.services.drama_service - 短剧：-ywZjnpi08, 集数：60, 用户：user_2a2e7f8d31912e4189
+2026-10-19 00:03:34 [INFO] app.services.drama_service - 短剧：-ywZjnpi08, 集数：60, 用户：user_2a2e7f8d31912e4189

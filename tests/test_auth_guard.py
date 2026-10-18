@@ -160,3 +160,32 @@ def test_admin_routes_guard(client, seed, monkeypatch):
     assert client.get("/api/v1/admin/dramas", headers={"X-Admin-Token": "nope"}).json()["code"] == 403
     r = client.get("/api/v1/admin/dramas", headers={"X-Admin-Token": "adm-123"})
     assert r.json()["code"] == 0
+
+
+def test_progress_requires_matching_token(client, seed):
+    url = "/api/v1/user/user_alice/progress"
+    body = {"video_id": "video_t1_01", "position": 10}
+    assert client.post(url, json=body).json()["code"] == 401
+    assert client.post(url, json=body, headers=bearer(seed["bob"])).json()["code"] == 403
+    r = client.get("/api/v1/user/user_alice/progress/drama_t1", headers=bearer(seed["bob"]))
+    assert r.json()["code"] == 403
+
+
+def test_progress_keeps_latest_position_and_sticky_finished(client, seed):
+    url = "/api/v1/user/user_alice/progress"
+    h = bearer(seed["alice"])
+
+    def current():
+        data = client.get("/api/v1/user/user_alice/progress/drama_t1", headers=h).json()["data"]["data"]
+        assert len(data) == 1
+        return data[0]["positionSeconds"], data[0]["isFinished"]
+
+    assert client.post(url, json={"video_id": "video_t1_01", "position": 100}, headers=h).json()["code"] == 0
+    assert current() == (100, False)
+    client.post(url, json={"video_id": "video_t1_01", "position": 40}, headers=h)
+    assert current() == (40, False)  # 续播位置取最新上报值，而非历史最大值
+    client.post(url, json={"video_id": "video_t1_01", "position": 90, "is_finished": True}, headers=h)
+    assert current() == (90, True)
+    client.post(url, json={"video_id": "video_t1_01", "position": 5, "is_finished": False}, headers=h)
+    assert current() == (5, True)  # is_finished 置位后不回退
+    assert client.post(url, json={"video_id": "missing", "position": 1}, headers=h).json()["code"] == 404

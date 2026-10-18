@@ -92,6 +92,7 @@ def ensure_demo_schema_compatibility() -> None:
     _migrate_users()
     _migrate_drama_episodes()
     _migrate_dramas()
+    _migrate_drama_episode_stats()
     from app.db.tag_migration import ensure_tag_schema
 
     ensure_tag_schema()
@@ -204,6 +205,7 @@ def _migrate_dramas() -> None:
             "tags": "TEXT NOT NULL DEFAULT ('[]')",
             "play_count": "BIGINT NOT NULL DEFAULT 0",
             "follow_count": "BIGINT NOT NULL DEFAULT 0",
+            "real_play_count": "BIGINT NOT NULL DEFAULT 0",
         }
         ql, qr = "`", "`"
     else:
@@ -213,6 +215,7 @@ def _migrate_dramas() -> None:
             "tags": "TEXT NOT NULL DEFAULT '[]'",
             "play_count": "INTEGER NOT NULL DEFAULT 0",
             "follow_count": "INTEGER NOT NULL DEFAULT 0",
+            "real_play_count": "INTEGER NOT NULL DEFAULT 0",
         }
         ql, qr = '"', '"'
 
@@ -222,6 +225,20 @@ def _migrate_dramas() -> None:
         sql = f"ALTER TABLE dramas ADD COLUMN {ql}{col_name}{qr} {definition}"
         database_proxy.execute_sql(sql)
         logger.info("已补齐 dramas.%s 字段", col_name)
+
+
+def _migrate_drama_episode_stats() -> None:
+    """drama_episode_stats 补 real_play_count（真实播放量，与种子 play_count 分开存）。"""
+    existing = _get_existing_columns("drama_episode_stats")
+    # 读取字段失败（或表不存在）时不盲目 ALTER
+    if not existing or "real_play_count" in existing:
+        return
+    if get_settings().db_driver == "mysql":
+        sql = "ALTER TABLE drama_episode_stats ADD COLUMN `real_play_count` BIGINT NOT NULL DEFAULT 0"
+    else:
+        sql = 'ALTER TABLE drama_episode_stats ADD COLUMN "real_play_count" INTEGER NOT NULL DEFAULT 0'
+    database_proxy.execute_sql(sql)
+    logger.info("已补齐 drama_episode_stats.real_play_count 字段")
 
 
 def initialize_runtime(create_schema: bool = False, seed: bool = False) -> None:

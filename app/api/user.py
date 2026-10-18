@@ -20,7 +20,6 @@ router = APIRouter(
 @with_db_connection
 def user_profile(user_id: str) -> dict[str, Any]:
     profile = user_service.get_user_profile(user_id)
-    print("user_profile:", profile)  # 调试输出，查看返回的用户信息
     if profile is None:
         return {"code": 404, "message": "用户不存在", "data": None}
     return {"code": 0, "message": "success", "data": profile}
@@ -44,7 +43,6 @@ def user_history(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=50),
 ) -> dict[str, Any]:
-    print(f"user_history: user_id={user_id}, page={page}, page_size={page_size}")  # 调试输出，查看请求参数
     result = user_service.get_user_history(user_id, page=page, page_size=page_size)
     return {"code": 0, "message": "success", "data": result}
 
@@ -82,7 +80,6 @@ def toggle_like(
     video_id: int = Body(...),
     is_like: bool | None = Body(default=None, description="目标状态；不传则 toggle"),
 ) -> dict[str, Any]:
-    print(f"toggle_like: user_id={user_id}, video_id={video_id}, is_like={is_like}")
     result = user_service.toggle_like(user_id, video_id, is_like)
     return {"code": 0, "message": "success", "data": result}
 
