@@ -159,3 +159,7 @@ PYTHONPATH=. python3.11 scripts/smoke_test.py
 
 [1]: https://fastapi.tiangolo.com/ "FastAPI Documentation"
 [2]: https://docs.peewee-orm.com/ "Peewee ORM Documentation"
+
+## 多语言标签管理
+
+英文编码、多语言字典、短剧权重和个人兴趣接口及部署命令见 [多语言标签模块](docs/multilingual-tags-api.md)。部署前执行 `python -m scripts.migrate_tags --seed`；旧标签先用 `python -m scripts.backfill_drama_tags` 预览，再按需添加 `--apply`。

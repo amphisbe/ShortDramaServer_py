@@ -92,6 +92,9 @@ def ensure_demo_schema_compatibility() -> None:
     _migrate_users()
     _migrate_drama_episodes()
     _migrate_dramas()
+    from app.db.tag_migration import ensure_tag_schema
+
+    ensure_tag_schema()
 
 
 def _get_existing_columns(table_name: str) -> set[str]:

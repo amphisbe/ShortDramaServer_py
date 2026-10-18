@@ -1,9 +1,49 @@
 # For You 推荐功能设计方案
 
 > 日期：2026-10-18  
-> 状态：设计方案，尚未实现  
+> 状态：第一阶段采用随机视频流；下文个性化推荐作为后续阶段设计
 > 适用项目：ShortDramaServer_py / ShortDramaClient（ShortDrama_03）  
 > 范围：短剧内容推荐，不包含 Reward、广告奖励及奖励观看任务。
+
+## 当前实施版本：随机五条视频
+
+根据 2026-10-18 最新要求，先提供随机短视频流接口。此节优先于下文涉及个性化评分、固定批次及每批十条的设计，后者保留为后续目标。
+
+- `GET /api/v1/for-you?count=5&content_lang=en`，Bearer JWT 鉴权，用户必须存在且启用；默认五条，count 范围 1～20。
+- 每次从已上架短剧的已上架分集中独立随机抽取，过滤空白播放地址，按内容语言筛选（默认 en）。可抽到任意分集，同一批分集不重复，但不限制同部短剧出现多个分集；跨请求允许重复。
+- 当前不依赖标签、画像、有效观看统计及可靠时长，不保存推荐批次、不使用游标，也不改动旧 recommended 接口。
+- 使用数据库中该分集的真实地址：绝对地址原样返回，相对地址拼接 STATIC_HOST，不使用 VIDEO_LIST 中的随机演示地址替代。
+- 响应为 `{code:0,message:"success",data:{list:[...]}}`；每项兼容现有播放器，包含 dramaId、episodeId、videoId、playurl、title、episodeNo、duration、position、isLiked、isFavorited、字幕及工具配置。保留旧 isFavorite 字段；duration 和 position 单位为秒。
+- 当前用户的点赞、收藏、关注、进度由 JWT 用户查询；不接受 viewer_user_id 指定其他用户。读取不补写统计行。
+- 候选不足时返回实际数量，没有内容时 list 为 []；没有 cursor、hasMore 或翻页结束语义。客户端滑动接近末尾时再次请求，跨批按 videoId 去重；本轮只实现服务端接口，客户端接入另行实施。
+
+```http
+GET /api/v1/for-you?count=5&content_lang=en
+Authorization: Bearer <token>
+```
+
+```json
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "list": [
+      {
+        "dramaId": "drama_001",
+        "episodeId": 101,
+        "videoId": "video_001",
+        "playurl": "https://example.com/video.mp4",
+        "duration": 0,
+        "position": 0,
+        "isLiked": false,
+        "isFavorited": false
+      }
+    ]
+  }
+}
+```
+
+上例仅展示关键字段和一项，正常有足够候选时默认返回五项。未登录沿用项目 HTTP 200 + code 401；count 等请求参数校验失败为 HTTP 422。
 
 ## 1. 目标与范围
 

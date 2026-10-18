@@ -11,6 +11,8 @@ from app.models.drama import (
     UserFollow,
 )
 
+from app.models.tag import Tag, TagTranslation, TagAlias, UserTagWeight, TAG_MODELS
+
 ALL_MODELS = [
     User,
     Drama,
@@ -22,7 +24,7 @@ ALL_MODELS = [
     UserEpisodeProgress,
     EpisodeComment,
     EpisodeShare,
-]
+] + TAG_MODELS
 
 __all__ = [
     "ALL_MODELS",
@@ -36,4 +38,8 @@ __all__ = [
     "UserEpisodeProgress",
     "EpisodeComment",
     "EpisodeShare",
+    "Tag",
+    "TagTranslation",
+    "TagAlias",
+    "UserTagWeight",
 ]

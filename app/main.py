@@ -9,6 +9,8 @@ from app.api.auth import router as auth_router
 from app.api.video import router as video_router
 from app.api.drama import router as drama_router
 from app.api.user import router as user_router
+from app.api.tags import router as tags_router
+from app.api.for_you import router as for_you_router
 from app.core.config import get_settings
 from app.core.logging import setup_logging
 from app.core.security import ApiAuthError
@@ -66,6 +68,8 @@ app.include_router(video_router)
 app.include_router(drama_router)
 app.include_router(user_router)
 app.include_router(auth_router)
+app.include_router(tags_router)
+app.include_router(for_you_router)
 
 
 @app.get("/health", tags=["system"], summary="健康检查")
