@@ -36,8 +36,12 @@ class BaseModel(Model):
 class User(BaseModel):
     id = BigAutoField()
     external_user_id = CharField(max_length=24, unique=True, index=True)
+    google_sub = CharField(max_length=128, null=True, unique=True, index=True)
+    email = CharField(max_length=255, default="")
+    email_verified = BooleanField(default=False)
     nickname = CharField(max_length=100, default="")
     avatar_url = CharField(max_length=1024, default="")
+    last_login_at = DateTimeField(null=True)
     status = IntegerField(default=1, index=True)
 
     class Meta:

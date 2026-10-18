@@ -6,9 +6,11 @@
 
 from __future__ import annotations
 
+import base64
 import random
 import json
 import math
+from collections import Counter
 from typing import Any
 
 from peewee import DoesNotExist, fn
@@ -18,9 +20,10 @@ from app.models import (
     DramaEpisode,
     DramaEpisodeStat,
     User,
+    UserDramaFavorite,
     UserEpisodeLike,
-    UserFollow,
     UserEpisodeProgress,
+    UserFollow,
 )
 
 
@@ -80,7 +83,7 @@ def list_dramas(
     page_size: int = 20,
 ) -> dict[str, Any]:
     """获取短剧列表（支持分类过滤）。"""
-    query = Drama.select().where(Drama.status == 1 and Drama.lang=='en')
+    query = Drama.select().where((Drama.status == 1) & (Drama.lang == 'en'))
 
     # if category and category != "推荐":
     #     query = query.where(Drama.category == category)
@@ -116,7 +119,7 @@ def get_featured_drama() -> dict[str, Any] | None:
 
 def get_hot_dramas(category: str = "", count: int = 4) -> list[dict[str, Any]]:
     """获取热门短剧（按播放量排序）。"""
-    query = Drama.select().where(Drama.status == 1 and Drama.hot == 1)
+    query = Drama.select().where((Drama.status == 1) & (Drama.hot == 1))
     # if category and category != "推荐":
     #     query = query.where(Drama.category == category)
     rows = list(query.order_by(Drama.play_count.desc()).limit(count))
@@ -135,16 +138,312 @@ def get_trending_dramas(
 
 
 def get_recommended_dramas(
-    exclude_drama_id: str = "", category: str = "", count: int = 4
-) -> list[dict[str, Any]]:
-    """猜你喜欢（随机推荐）。"""
+    exclude_drama_id: str = "",
+    category: str = "",
+    count: int = 5,
+    viewer_user_id: str | None = None,
+    cursor: str | None = None,
+) -> dict[str, Any]:
+    """猜你喜欢 — 规则引擎 + 游标分页。
+
+    有 viewer_user_id 时走个性化推荐（优先级填充 + 交叉排序）；
+    无 viewer_user_id 时走热门兜底（冷启动）。
+    游标分页避免 Feed 流翻页时的数据重复/遗漏。
+    """
+    count = min(max(count, 1), 20)
+
+    if viewer_user_id:
+        return _recommend_personalized(
+            viewer_user_id=viewer_user_id,
+            exclude_drama_id=exclude_drama_id,
+            category=category,
+            count=count,
+            cursor=cursor,
+        )
+    else:
+        return _recommend_hot_fallback(
+            exclude_drama_id=exclude_drama_id,
+            category=category,
+            count=count,
+            cursor=cursor,
+        )
+
+
+# ============ 猜你喜欢 — 个性化推荐 ============
+
+
+def _recommend_personalized(
+    viewer_user_id: str,
+    exclude_drama_id: str,
+    category: str,
+    count: int,
+    cursor: str | None,
+) -> dict[str, Any]:
+    user = _get_user_by_external_id(viewer_user_id)
+    if user is None:
+        return _recommend_hot_fallback(exclude_drama_id, category, count, cursor)
+
+    viewed_ids = _get_user_viewed_drama_ids(user)
+    fav_drama_ids = _get_user_fav_drama_ids(user)
+    excluded_ids = viewed_ids | fav_drama_ids
+
+    # 提取偏好标签 → 热门池 + 标签池
+    pref_tags = _get_user_preference_tags(user)
+    hot_pool = _query_hot_pool(pref_tags, excluded_ids, exclude_drama_id, category)
+    tag_pool = _query_tag_pool(pref_tags, excluded_ids, exclude_drama_id, category)
+
+    # 合并候选，去重
+    hot_ids = {d.id for d in hot_pool}
+    tag_pool = [d for d in tag_pool if d.id not in hot_ids]
+
+    # 探索随机池：排除热门池和标签池已覆盖的
+    all_selected_ids = hot_ids | {d.id for d in tag_pool}
+    explore_pool = _query_explore_pool(all_selected_ids, excluded_ids, exclude_drama_id, category)
+
+    # 按优先级加载足量候选
+    all_candidates = _priority_fill(hot_pool, tag_pool, explore_pool)
+
+    # 游标分页
+    return _paginate_with_cursor(all_candidates, count, cursor)
+
+
+def _recommend_hot_fallback(
+    exclude_drama_id: str,
+    category: str,
+    count: int,
+    cursor: str | None,
+) -> dict[str, Any]:
+    """冷启动：全站热门，按 hotness_score 排序，按 category 去重避免全是同一分类。"""
     query = Drama.select().where(Drama.status == 1)
     if exclude_drama_id:
         query = query.where(Drama.external_drama_id != exclude_drama_id)
     if category and category != "推荐":
         query = query.where(Drama.category == category)
-    rows = list(query.order_by(fn.Random()).limit(count))
-    return [_build_drama_item(d) for d in rows]
+
+    score = (Drama.play_count * 0.6 + Drama.follow_count * 0.4)
+    rows = list(query.order_by(score.desc(), Drama.id.desc()))
+
+    # 按 category 去重，保证多样性
+    seen_categories: set[str] = set()
+    candidates: list[Drama] = []
+    for d in rows:
+        if d.category not in seen_categories or len(candidates) < count // 2 + 1:
+            candidates.append(d)
+            seen_categories.add(d.category)
+
+    return _paginate_with_cursor(candidates, count, cursor)
+
+
+# ============ 游标分页 ============
+
+
+def _encode_cursor(hotness_score: float, drama_id: int) -> str:
+    raw = f"{hotness_score}:{drama_id}"
+    return base64.urlsafe_b64encode(raw.encode()).decode()
+
+
+def _decode_cursor(cursor: str) -> tuple[float, int]:
+    raw = base64.urlsafe_b64decode(cursor.encode()).decode()
+    score_str, id_str = raw.split(":")
+    return float(score_str), int(id_str)
+
+
+def _hotness_score(drama: Drama) -> float:
+    return drama.play_count * 0.6 + drama.follow_count * 0.4
+
+
+def _paginate_with_cursor(
+    candidates: list[Drama],
+    count: int,
+    cursor: str | None,
+) -> dict[str, Any]:
+    """对候选列表应用游标分页，返回当前页数据和下一页 cursor。"""
+    # 游标定位
+    start_idx = 0
+    if cursor:
+        cursor_decoded = False
+        try:
+            cursor_score, cursor_id = _decode_cursor(cursor)
+            cursor_decoded = True
+        except Exception:
+            pass
+        if cursor_decoded:
+            for i, d in enumerate(candidates):
+                s = _hotness_score(d)
+                if s < cursor_score or (s == cursor_score and d.id < cursor_id):
+                    start_idx = i
+                    break
+            else:
+                # 游标已越过所有候选项，返回空页
+                start_idx = len(candidates)
+
+    page = candidates[start_idx : start_idx + count]
+    has_more = (start_idx + count) < len(candidates)
+
+    next_cursor = ""
+    if has_more and page:
+        last = page[-1]
+        next_cursor = _encode_cursor(_hotness_score(last), last.id)
+
+    return {
+        "data": [_build_drama_item(d) for d in page],
+        "cursor": next_cursor,
+        "hasMore": has_more,
+    }
+
+
+# ============ 优先级填充 + 交叉排序 ============
+
+
+def _priority_fill(
+    hot_pool: list[Drama],
+    tag_pool: list[Drama],
+    explore_pool: list[Drama],
+) -> list[Drama]:
+    """优先级填充：热门最多 3 条 → 标签最多 2 条 → 随机补齐。
+    结果按交叉顺序排列，打散同类型，避免前 N 条全是热门。
+    """
+    hot = list(hot_pool[:3])
+    tag = list(tag_pool[:2])
+    explore = list(explore_pool)
+
+    # 热门不足时标签多取
+    needed = 3 - len(hot)
+    if needed > 0 and tag_pool:
+        tag.extend(tag_pool[len(tag) : len(tag) + needed])
+        tag = tag[:3]  # 标签最多也不超过 3
+
+    # 交叉排序：[H, T, H, E, H, T, E, ...]
+    result: list[Drama] = []
+    while len(result) < 8:  # 取足够多供游标分页消耗
+        added = False
+        if hot:
+            result.append(hot.pop(0))
+            added = True
+        if tag:
+            result.append(tag.pop(0))
+            added = True
+        if explore:
+            result.append(explore.pop(0))
+            added = True
+        if not added:
+            break
+
+    return result
+
+
+# ============ 用户行为分析 ============
+
+
+def _get_user_by_external_id(external_id: str) -> User | None:
+    try:
+        return User.get(User.external_user_id == external_id)
+    except DoesNotExist:
+        return None
+
+
+def _get_user_viewed_drama_ids(user: User) -> set[int]:
+    """从观看历史中提取已看过的短剧 ID 集合。"""
+    progresses = (
+        UserEpisodeProgress
+        .select(UserEpisodeProgress, DramaEpisode)
+        .join(DramaEpisode, on=(UserEpisodeProgress.episode == DramaEpisode.id))
+        .where(UserEpisodeProgress.user == user)
+    )
+    return {p.episode.drama_id for p in progresses}
+
+
+def _get_user_fav_drama_ids(user: User) -> set[int]:
+    """提取用户已收藏的短剧 ID 集合。"""
+    rows = UserDramaFavorite.select().where(UserDramaFavorite.user == user)
+    return {r.drama_id for r in rows}
+
+
+def _get_user_preference_tags(user: User) -> list[str]:
+    """从用户收藏 + 观看历史统计偏好标签，按频次降序返回。"""
+    fav_dramas = (
+        Drama.select()
+        .join(UserDramaFavorite, on=(UserDramaFavorite.drama == Drama.id))
+        .where(UserDramaFavorite.user == user)
+    )
+    viewed_drama_ids = _get_user_viewed_drama_ids(user)
+    viewed_dramas = []
+    if viewed_drama_ids:
+        viewed_dramas = list(Drama.select().where(Drama.id.in_(viewed_drama_ids)))
+
+    tag_counter: Counter = Counter()
+    for d in list(fav_dramas) + viewed_dramas:
+        tag_counter[d.category] += 2  # category 权重更高
+        for tag in _load_tags(d.tags):
+            tag_counter[tag] += 1
+
+    return [tag for tag, _ in tag_counter.most_common(10)]
+
+
+# ============ 候选池查询 ============
+
+
+def _query_hot_pool(
+    pref_tags: list[str],
+    excluded_ids: set[int],
+    exclude_drama_id: str,
+    category: str,
+) -> list[Drama]:
+    """同类热门池：category 命中偏好标签，按 play_count 降序。"""
+    query = Drama.select().where(Drama.status == 1)
+    if excluded_ids:
+        query = query.where(Drama.id.not_in(excluded_ids))
+    if exclude_drama_id:
+        query = query.where(Drama.external_drama_id != exclude_drama_id)
+    if category and category != "推荐":
+        query = query.where(Drama.category == category)
+
+    if pref_tags:
+        query = query.where(Drama.category.in_(pref_tags))
+
+    return list(query.order_by(Drama.play_count.desc()).limit(30))
+
+
+def _query_tag_pool(
+    pref_tags: list[str],
+    excluded_ids: set[int],
+    exclude_drama_id: str,
+    category: str,
+) -> list[Drama]:
+    """标签匹配池：tags JSON 中包含偏好标签，按 follow_count 降序。"""
+    if not pref_tags:
+        return []
+
+    query = Drama.select().where(Drama.status == 1)
+    if excluded_ids:
+        query = query.where(Drama.id.not_in(excluded_ids))
+    if exclude_drama_id:
+        query = query.where(Drama.external_drama_id != exclude_drama_id)
+    if category and category != "推荐":
+        query = query.where(Drama.category == category)
+
+    # Peewee 不支持 JSON 内 LIKE，先用 Python 侧过滤
+    rows = list(query.order_by(Drama.follow_count.desc()).limit(50))
+    return [d for d in rows if any(tag in _load_tags(d.tags) for tag in pref_tags)]
+
+
+def _query_explore_pool(
+    all_selected_ids: set[int],
+    excluded_ids: set[int],
+    exclude_drama_id: str,
+    category: str,
+) -> list[Drama]:
+    """探索随机池：排除已入选的，随机排序。"""
+    query = Drama.select().where(Drama.status == 1)
+    combined = all_selected_ids | excluded_ids
+    if combined:
+        query = query.where(Drama.id.not_in(combined))
+    if exclude_drama_id:
+        query = query.where(Drama.external_drama_id != exclude_drama_id)
+    if category and category != "推荐":
+        query = query.where(Drama.category == category)
+
+    return list(query.order_by(fn.Random()).limit(20))
 
 
 # ============ 详情页接口 ============
@@ -221,6 +520,7 @@ def get_drama_episodes(
     # 预取 viewer 状态
     liked_ids: set[int] = set()
     progress_map: dict[int, int] = {}
+    is_favorite = False
     logger
     # author: User = drama.author_user
     author = None
@@ -230,6 +530,14 @@ def get_drama_episodes(
         if viewer is not None:
             liked_ids, is_follow, progress_map = _preload_viewer_state(
                 viewer, episodes, author
+            )
+            is_favorite = (
+                UserDramaFavorite.select()
+                .where(
+                    (UserDramaFavorite.user == viewer)
+                    & (UserDramaFavorite.drama == drama)
+                )
+                .exists()
             )
 
     result = []
@@ -243,6 +551,7 @@ def get_drama_episodes(
                 ep.id in liked_ids,
                 is_follow,
                 progress_map.get(ep.id, 0),
+                is_favorite,
             )
         )
 
@@ -283,9 +592,17 @@ def _preload_stats(
         DramaEpisodeStat.episode.in_(episode_ids)
     )
     stat_map: dict[int, DramaEpisodeStat] = {s.episode_id: s for s in stats}
-    for ep in episodes:
-        if ep.id not in stat_map:
-            stat_map[ep.id] = DramaEpisodeStat.create(episode=ep)
+    missing_ids = [ep.id for ep in episodes if ep.id not in stat_map]
+    if missing_ids:
+        # 并发请求可能同时补同一集的统计行（主键 episode_id），
+        # 用 INSERT IGNORE / INSERT OR IGNORE 忽略已存在的行，再统一读回，避免 1062 Duplicate entry
+        DramaEpisodeStat.insert_many(
+            [{"episode": ep_id} for ep_id in missing_ids]
+        ).on_conflict_ignore().execute()
+        for s in DramaEpisodeStat.select().where(
+            DramaEpisodeStat.episode.in_(missing_ids)
+        ):
+            stat_map[s.episode_id] = s
     return stat_map
 
 
@@ -344,6 +661,20 @@ def _resolve_play_url(db_play_url: str) -> str:
     return random.choice(urls)
 
 
+def _resolve_subtitle_url(db_subtitle_url: str | None) -> str:
+    """字幕地址：不受 VIDEO_MODE/VIDEO_LIST 影响。
+
+    为空返回 ""；已是绝对地址（http/https 或 //）原样返回；
+    相对路径拼接 STATIC_HOST。
+    """
+    url = (db_subtitle_url or "").strip()
+    if not url:
+        return ""
+    if url.startswith(("http://", "https://", "//")):
+        return url
+    return f"{get_settings().static_host.rstrip('/')}/{url.lstrip('/')}"
+
+
 def _build_episode_item(
     episode: DramaEpisode,
     drama: Drama,
@@ -352,6 +683,7 @@ def _build_episode_item(
     is_liked: bool,
     is_follow: bool,
     position: int,
+    is_favorite: bool = False,
 ) -> dict[str, Any]:
     """构建与前端 VideoType 兼容的单集播放项。"""
     if stat is None:
@@ -386,16 +718,17 @@ def _build_episode_item(
         # "vdtitle": episode.title,
         # "vdtitle": f"第 {episode.episode_no} 集",
         "vdtitle": "",
-        "subtitleUrl": _resolve_play_url(episode.subtitle_url),
+        "subtitleUrl": _resolve_subtitle_url(episode.subtitle_url),
         "subtitleFormat": "srt",
         "subtitleLang": "en",
-        "subtitleEnabled": episode.subtitle_url != "",
+        "subtitleEnabled": bool((episode.subtitle_url or "").strip()),
         "loop": episode.loop,
         "duration": episode.duration_seconds,
         "playIng": episode.play_ing,
         "muted": episode.muted,
         "likeSum": stat.like_count,
         "isLiked": is_liked,
+        "isFavorite": is_favorite,
         "commemtSum": stat.comment_count,
         "shareSum": stat.share_count,
         "isPlaying": episode.is_playing,
@@ -407,8 +740,31 @@ def _build_episode_item(
         "total": drama.total_episodes,
         "showBottomArea": episode.show_bottom_area,
         "bottomAreaBtnText": bottom_area_btn_text,
-        "toolInfo": _load_tool_info(episode.tool_info_json, stat.like_count),
+        "toolInfo": _apply_tool_state(
+            _load_tool_info(episode.tool_info_json, stat.like_count),
+            is_liked,
+            is_favorite,
+        ),
     }
+
+
+def _apply_tool_state(
+    tool_info: list[dict[str, Any]], is_liked: bool, is_favorite: bool
+) -> list[dict[str, Any]]:
+    """按当前用户状态设置工具栏图标：已点赞 dianzan_h，已收藏 shoucang_h（播放器以 _h 表示选中）。"""
+    result = []
+    for tool in tool_info:
+        if not isinstance(tool, dict):
+            result.append(tool)
+            continue
+        tool = dict(tool)
+        icon = str(tool.get("icon") or "")
+        if icon in ("dianzan", "dianzan_h"):
+            tool["icon"] = "dianzan_h" if is_liked else "dianzan"
+        elif icon in ("shoucang", "shoucang_h"):
+            tool["icon"] = "shoucang_h" if is_favorite else "shoucang"
+        result.append(tool)
+    return result
 
 
 def _load_tool_info(

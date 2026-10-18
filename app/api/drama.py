@@ -2,8 +2,10 @@
 
 from typing import Any
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 
+from app.core.security import get_optional_user
+from app.db.dependencies import with_db_connection
 from app.services import drama_service
 
 router = APIRouter(prefix="/api/v1/dramas", tags=["drama"])
@@ -13,6 +15,7 @@ router = APIRouter(prefix="/api/v1/dramas", tags=["drama"])
 
 
 @router.get("", summary="短剧列表（首页）")
+@with_db_connection
 def drama_list(
     category: str = Query(default="推荐", description="分类筛选"),
     page: int = Query(default=1, ge=1),
@@ -24,6 +27,7 @@ def drama_list(
 
 
 @router.get("/featured", summary="主推短剧")
+@with_db_connection
 def featured_drama() -> dict[str, Any]:
     """获取首页主推短剧。"""
     item = drama_service.get_featured_drama()
@@ -35,6 +39,7 @@ def featured_drama() -> dict[str, Any]:
 
 
 @router.get("/hot", summary="热门短剧")
+@with_db_connection
 def hot_dramas(
     category: str = Query(default="推荐", description="分类筛选"),
     count: int = Query(default=4, ge=1, le=20),
@@ -45,6 +50,7 @@ def hot_dramas(
 
 
 @router.get("/trending", summary="热搜短剧")
+@with_db_connection
 def trending_dramas(
     category: str = Query(default="推荐", description="分类筛选"),
     count: int = Query(default=5, ge=1, le=20),
@@ -55,22 +61,34 @@ def trending_dramas(
 
 
 @router.get("/recommended", summary="猜你喜欢")
+@with_db_connection
 def recommended_dramas(
     exclude_id: str = Query(default="", description="排除的短剧 ID"),
     category: str = Query(default="推荐", description="分类筛选"),
-    count: int = Query(default=4, ge=1, le=20),
+    count: int = Query(default=5, ge=1, le=20),
+    viewer_user_id: str | None = Query(default=None, description="当前用户 ID，传入时走个性化推荐"),
+    cursor: str | None = Query(default=None, description="游标，首次不传，翻页时带上次返回的 cursor"),
 ) -> dict[str, Any]:
-    """猜你喜欢 - 随机推荐。"""
-    items = drama_service.get_recommended_dramas(
-        exclude_drama_id=exclude_id, category=category, count=count
+    """猜你喜欢 — 规则引擎 + 游标分页。
+
+    传入 viewer_user_id 时基于用户偏好推荐；不传时走热门兜底。
+    游标分页防止 Feed 流滑动刷新时的数据重复/遗漏。
+    """
+    result = drama_service.get_recommended_dramas(
+        exclude_drama_id=exclude_id,
+        category=category,
+        count=count,
+        viewer_user_id=viewer_user_id,
+        cursor=cursor,
     )
-    return {"code": 0, "message": "success", "data": items}
+    return {"code": 0, "message": "success", "data": result}
 
 
 # ============ 详情页接口 ============
 
 
 @router.get("/{drama_id}", summary="短剧详情")
+@with_db_connection
 def drama_detail(drama_id: str) -> dict[str, Any]:
     """根据 external_drama_id 获取短剧详情。"""
     item = drama_service.get_drama_by_id(drama_id)
@@ -80,6 +98,7 @@ def drama_detail(drama_id: str) -> dict[str, Any]:
 
 
 @router.get("/{drama_id}/related", summary="同类推荐")
+@with_db_connection
 def related_dramas(
     drama_id: str,
     category: str = Query(default="", description="分类"),
@@ -93,13 +112,15 @@ def related_dramas(
 
 
 @router.get("/{drama_id}/episodes", summary="剧集列表")
+@with_db_connection
 def drama_episodes(
     drama_id: str,
-    viewer_user_id: str | None = Query(default=None, description="当前用户 ID"),
+    viewer_user_id: str | None = Query(default=None, description="当前用户 ID；不传时使用 Bearer 令牌中的用户"),
+    token_user_id: str | None = Depends(get_optional_user),
 ) -> dict[str, Any]:
     """获取短剧的全部剧集（播放页数据）。"""
     result = drama_service.get_drama_episodes(
-        drama_id=drama_id, viewer_external_user_id=viewer_user_id
+        drama_id=drama_id, viewer_external_user_id=viewer_user_id or token_user_id
     )
     if not result["found"]:
         return {"code": 404, "message": "短剧或剧集未找到", "data": None}
@@ -117,6 +138,7 @@ def drama_episodes(
 
 
 @router.get("/by-user/{user_id}", summary="通过 userId 查询短剧 ID")
+@with_db_connection
 def find_drama_by_user(user_id: str) -> dict[str, Any]:
     """通过剧集作者的 userId 反查短剧 external_drama_id。"""
     drama_id = drama_service.find_drama_id_by_episode_user_id(user_id)

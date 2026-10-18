@@ -31,6 +31,7 @@ def build_database(settings: Settings | None = None) -> Database:
             charset=settings.mysql_charset,
             max_connections=settings.mysql_max_connections,
             stale_timeout=settings.mysql_stale_timeout,
+            timeout=settings.mysql_pool_timeout,
         )
 
     sqlite_path: Path = settings.sqlite_database_path
@@ -88,6 +89,7 @@ def ensure_demo_schema_compatibility() -> None:
     """
 
     connect_database()
+    _migrate_users()
     _migrate_drama_episodes()
     _migrate_dramas()
 
@@ -141,6 +143,51 @@ def _migrate_drama_episodes() -> None:
         sql = f"ALTER TABLE drama_episodes ADD COLUMN {ql}{col_name}{qr} {definition}"
         database_proxy.execute_sql(sql)
         logger.info("已补齐 drama_episodes.%s 字段", col_name)
+
+
+def _migrate_users() -> None:
+    existing = _get_existing_columns("users")
+    settings = get_settings()
+
+    if settings.db_driver == "mysql":
+        col_defs = {
+            "google_sub": "VARCHAR(128) NULL",
+            "email": "VARCHAR(255) NOT NULL DEFAULT ''",
+            "email_verified": "TINYINT(1) NOT NULL DEFAULT 0",
+            "last_login_at": "DATETIME NULL",
+        }
+        ql, qr = "`", "`"
+    else:
+        col_defs = {
+            "google_sub": "VARCHAR(128)",
+            "email": "VARCHAR(255) NOT NULL DEFAULT ''",
+            "email_verified": "INTEGER NOT NULL DEFAULT 0",
+            "last_login_at": "DATETIME",
+        }
+        ql, qr = '"', '"'
+
+    for col_name, definition in col_defs.items():
+        if col_name in existing:
+            continue
+        sql = f"ALTER TABLE users ADD COLUMN {ql}{col_name}{qr} {definition}"
+        database_proxy.execute_sql(sql)
+        logger.info("Added missing users.%s column", col_name)
+
+    _ensure_users_google_sub_index()
+
+
+def _ensure_users_google_sub_index() -> None:
+    try:
+        existing_indexes = {idx.name for idx in database_proxy.get_indexes("users")}
+    except Exception as exc:
+        logger.warning("妫€鏌?users 绱㈠紩澶辫触锛?%s", exc)
+        return
+
+    index_name = "idx_users_google_sub_unique"
+    if index_name in existing_indexes:
+        return
+    database_proxy.execute_sql(f"CREATE UNIQUE INDEX {index_name} ON users (google_sub)")
+    logger.info("Created users.google_sub unique index")
 
 
 def _migrate_dramas() -> None:

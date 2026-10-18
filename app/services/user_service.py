@@ -12,6 +12,7 @@ from app.models import (
     UserFollow,
 )
 
+from app.db.database import initialize_database
 from app.services.drama_service import _build_drama_item
 
 
@@ -129,24 +130,26 @@ def save_progress(
     is_finished: bool = False,
 ) -> bool:
     """保存或更新用户的观看进度。"""
-    user = get_user_by_external_id(external_user_id)
-    print("user:", user)
-    if user is None:
-        return False
-    try:
-        episode = DramaEpisode.get(DramaEpisode.external_video_id == external_video_id)
-    except Exception:
-        return False
+    db = initialize_database()
+    with db.atomic():
+        user = get_user_by_external_id(external_user_id)
+        print("user:", user)
+        if user is None:
+            return False
+        try:
+            episode = DramaEpisode.get(DramaEpisode.external_video_id == external_video_id)
+        except Exception:
+            return False
 
-    # print(f"save_progress:::::::: user_id={external_user_id}, video_id={external_video_id}, position_seconds={position_seconds}, is_finished={is_finished}")
-    progress, _ = UserEpisodeProgress.get_or_create(
-        user=user,
-        episode=episode,
-        defaults={"position_seconds": position_seconds, "is_finished": is_finished},
-    )
-    progress.position_seconds = max(progress.position_seconds, position_seconds)
-    progress.is_finished = progress.is_finished or is_finished
-    progress.save()
+        # print(f"save_progress:::::::: user_id={external_user_id}, video_id={external_video_id}, position_seconds={position_seconds}, is_finished={is_finished}")
+        progress, _ = UserEpisodeProgress.get_or_create(
+            user=user,
+            episode=episode,
+            defaults={"position_seconds": position_seconds, "is_finished": is_finished},
+        )
+        progress.position_seconds = max(progress.position_seconds, position_seconds)
+        progress.is_finished = progress.is_finished or is_finished
+        progress.save()
     return True
 
 
@@ -185,33 +188,45 @@ def get_progress(external_user_id: str, drama_id: str) -> dict:
 # ============ 点赞 ============
 
 
-def toggle_like(external_user_id: str, external_video_id: str) -> dict:
-    """点赞/取消点赞（toggle），返回新状态和赞数。"""
-    user = get_user_by_external_id(external_user_id)
-    print("toggle_like user:", user)
-    if user is None:
-        return {"liked": False, "likeCount": 0}
+def toggle_like(
+    external_user_id: str,
+    external_video_id: str,
+    desired: bool | None = None,
+) -> dict:
+    """点赞/取消点赞，返回新状态和赞数。
 
-    try:
-        episode = DramaEpisode.get(DramaEpisode.id == external_video_id)
-    except Exception:
-        return {"liked": False, "likeCount": 0}
+    desired 为 True/False 时幂等设置为该状态；为 None 时保持旧的 toggle 行为。
+    """
+    db = initialize_database()
+    with db.atomic():
+        user = get_user_by_external_id(external_user_id)
+        print("toggle_like user:", user)
+        if user is None:
+            return {"liked": False, "likeCount": 0}
 
-    stat, _ = DramaEpisodeStat.get_or_create(
-        episode=episode, defaults={"like_count": 0}
-    )
+        try:
+            episode = DramaEpisode.get(DramaEpisode.id == external_video_id)
+        except Exception:
+            return {"liked": False, "likeCount": 0}
 
-    try:
-        like = UserEpisodeLike.get(user=user, episode=episode)
-        like.delete_instance()
-        stat.like_count = max(0, stat.like_count - 1)
-        stat.save()
-        return {"liked": False, "likeCount": stat.like_count}
-    except Exception:
-        UserEpisodeLike.create(user=user, episode=episode)
-        stat.like_count += 1
-        stat.save()
-        return {"liked": True, "likeCount": stat.like_count}
+        stat, _ = DramaEpisodeStat.get_or_create(
+            episode=episode, defaults={"like_count": 0}
+        )
+
+        like = UserEpisodeLike.get_or_none(
+            (UserEpisodeLike.user == user) & (UserEpisodeLike.episode == episode)
+        )
+        target = (like is None) if desired is None else desired
+
+        if target and like is None:
+            UserEpisodeLike.create(user=user, episode=episode)
+            stat.like_count += 1
+            stat.save()
+        elif not target and like is not None:
+            like.delete_instance()
+            stat.like_count = max(0, stat.like_count - 1)
+            stat.save()
+        return {"liked": target, "likeCount": stat.like_count}
 
 
 def check_liked(external_user_id: str, external_video_id: str) -> dict:
@@ -238,30 +253,42 @@ def check_liked(external_user_id: str, external_video_id: str) -> dict:
 # ============ 收藏 ============
 
 
-def toggle_favorite(external_user_id: str, external_video_id: str) -> dict:
-    """收藏/取消收藏短剧（toggle），通过剧集 video_id 反查短剧后切换收藏状态。"""
-    print('favorite:::::::::', external_user_id, external_video_id)
-    user = get_user_by_external_id(external_user_id)
-    if user is None:
-        return {"favorited": False, "followCount": 0}
+def toggle_favorite(
+    external_user_id: str,
+    external_video_id: str,
+    desired: bool | None = None,
+) -> dict:
+    """收藏/取消收藏短剧，通过剧集 video_id 反查短剧后设置收藏状态。
 
-    try:
-        episode = DramaEpisode.get(DramaEpisode.id == external_video_id)
-        drama = episode.drama
-    except Exception:
-        return {"favorited": False, "followCount": 0}
+    desired 为 True/False 时幂等设置为该状态；为 None 时保持旧的 toggle 行为。
+    """
+    db = initialize_database()
+    with db.atomic():
+        print('favorite:::::::::', external_user_id, external_video_id)
+        user = get_user_by_external_id(external_user_id)
+        if user is None:
+            return {"favorited": False, "followCount": 0}
 
-    try:
-        fav = UserDramaFavorite.get(user=user, drama=drama)
-        fav.delete_instance()
-        drama.follow_count = max(0, drama.follow_count - 1)
-        drama.save()
-        return {"favorited": False, "followCount": drama.follow_count}
-    except Exception:
-        UserDramaFavorite.create(user=user, drama=drama)
-        drama.follow_count += 1
-        drama.save()
-        return {"favorited": True, "followCount": drama.follow_count}
+        try:
+            episode = DramaEpisode.get(DramaEpisode.id == external_video_id)
+            drama = episode.drama
+        except Exception:
+            return {"favorited": False, "followCount": 0}
+
+        fav = UserDramaFavorite.get_or_none(
+            (UserDramaFavorite.user == user) & (UserDramaFavorite.drama == drama)
+        )
+        target = (fav is None) if desired is None else desired
+
+        if target and fav is None:
+            UserDramaFavorite.create(user=user, drama=drama)
+            drama.follow_count += 1
+            drama.save()
+        elif not target and fav is not None:
+            fav.delete_instance()
+            drama.follow_count = max(0, drama.follow_count - 1)
+            drama.save()
+        return {"favorited": target, "followCount": drama.follow_count}
 
 
 # ============ 分享 ============
@@ -273,23 +300,25 @@ def record_share(
     channel: str,
 ) -> dict:
     """记录一次分享事件，返回分享状态和分享数。"""
-    try:
-        episode = DramaEpisode.get(DramaEpisode.id == external_video_id)
-    except Exception:
-        return {"shared": False, "shareCount": 0}
+    db = initialize_database()
+    with db.atomic():
+        try:
+            episode = DramaEpisode.get(DramaEpisode.id == external_video_id)
+        except Exception:
+            return {"shared": False, "shareCount": 0}
 
-    user = get_user_by_external_id(external_user_id)
+        user = get_user_by_external_id(external_user_id)
 
-    EpisodeShare.create(
-        episode=episode,
-        user=user,
-        channel=channel or "unknown",
-    )
+        EpisodeShare.create(
+            episode=episode,
+            user=user,
+            channel=channel or "unknown",
+        )
 
-    stat, _ = DramaEpisodeStat.get_or_create(
-        episode=episode, defaults={"share_count": 0}
-    )
-    stat.share_count += 1
-    stat.save()
+        stat, _ = DramaEpisodeStat.get_or_create(
+            episode=episode, defaults={"share_count": 0}
+        )
+        stat.share_count += 1
+        stat.save()
 
-    return {"shared": True, "shareCount": stat.share_count}
+        return {"shared": True, "shareCount": stat.share_count}

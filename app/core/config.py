@@ -35,12 +35,18 @@ class Settings(BaseSettings):
     mysql_charset: str = Field(default="utf8mb4", alias="MYSQL_CHARSET")
     mysql_max_connections: int = Field(default=32, alias="MYSQL_MAX_CONNECTIONS")
     mysql_stale_timeout: int = Field(default=300, alias="MYSQL_STALE_TIMEOUT")
+    mysql_pool_timeout: int = Field(default=5, alias="MYSQL_POOL_TIMEOUT")
 
     static_host: str = Field(default="https://v.shortdramago.win", alias="STATIC_HOST")
     static_img: str = Field(default="./static/img", alias="STATIC_IMG")
     static_demo: str = Field(default="./static/demo", alias="STATIC_DEMO")
     video_mode: Literal["demo", "online"] = Field(default="demo", alias="VIDEO_MODE")
     video_list: str = Field(default="", alias="VIDEO_LIST")
+    google_web_client_id: str = Field(default="", alias="GOOGLE_WEB_CLIENT_ID")
+    jwt_secret: str = Field(default="change-me-in-production", alias="JWT_SECRET")
+    jwt_expire_seconds: int = Field(default=60 * 60 * 24 * 30, alias="JWT_EXPIRE_SECONDS")
+    # 管理接口（/api/v1/admin/*）令牌，请求头 X-Admin-Token；为空时管理接口禁用
+    admin_token: str = Field(default="", alias="ADMIN_TOKEN")
 
     model_config = SettingsConfigDict(
         env_file=str(_PROJECT_ROOT / ".env"),

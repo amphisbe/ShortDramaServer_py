@@ -86,6 +86,26 @@ PYTHONPATH=. uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 | `page` | integer | 否 | `1` | 页码。 |
 | `page_size` | integer | 否 | `20` | 每页数量，最大 `100`。 |
 
+### 鉴权
+
+| 接口 | 鉴权方式 |
+|---|---|
+| `POST /api/v1/auth/google` | 无；用 Google `id_token` 换取服务端 JWT（HS256，`sub` 为 `userId`）。 |
+| `/api/v1/user/{user_id}/*` | 必须携带 `Authorization: Bearer <JWT>`，且路径 `user_id` 必须等于令牌中的 `sub`。 |
+| `GET /api/v1/dramas/{drama_id}/episodes` | 可选；未传 `viewer_user_id` 时使用 Bearer 令牌中的用户计算点赞/收藏/进度。 |
+| `/api/v1/admin/*` | 必须携带请求头 `X-Admin-Token`，值等于 `ADMIN_TOKEN`；`ADMIN_TOKEN` 为空时管理接口禁用。 |
+
+鉴权失败时 HTTP 状态仍为 200，按统一信封返回：未登录/令牌无效 `{"code": 401, ...}`，无权限 `{"code": 403, ...}`。
+
+相关环境变量（写入 `.env`）：
+
+```env
+JWT_SECRET=请替换为足够长的随机字符串
+JWT_EXPIRE_SECONDS=2592000
+GOOGLE_WEB_CLIENT_ID=xxxx.apps.googleusercontent.com
+ADMIN_TOKEN=请替换为随机字符串（留空则禁用管理接口）
+```
+
 ## 五、数据库模型
 
 当前 Demo 建立了短剧播放接口所需的核心表。用户、短剧、分集和分集统计是播放数据源的主链路，关注、点赞、收藏和播放进度用于计算当前用户视角下的状态字段。

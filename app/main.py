@@ -1,14 +1,17 @@
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
+from app.api.auth import router as auth_router
 from app.api.video import router as video_router
 from app.api.drama import router as drama_router
 from app.api.user import router as user_router
 from app.core.config import get_settings
 from app.core.logging import setup_logging
+from app.core.security import ApiAuthError
 from app.db.database import close_database, initialize_runtime
 
 import uvicorn
@@ -49,9 +52,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.exception_handler(ApiAuthError)
+async def api_auth_error_handler(request: Request, exc: ApiAuthError) -> JSONResponse:
+    # 保持项目统一信封：HTTP 200 + code（401 未登录/令牌无效，403 无权限）
+    return JSONResponse(
+        status_code=200,
+        content={"code": exc.code, "message": exc.message, "data": None},
+    )
+
+
 app.include_router(video_router)
 app.include_router(drama_router)
 app.include_router(user_router)
+app.include_router(auth_router)
 
 
 @app.get("/health", tags=["system"], summary="健康检查")

@@ -1,14 +1,17 @@
 from typing import Any
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 
+from app.core.security import require_admin
 from app.db.test_data import seed_temp_test_data
+from app.db.dependencies import with_db_connection
 from app.services.play_service import list_dramas, list_play_items
 
 router = APIRouter(prefix="/api/v1", tags=["video"])
 
 
 @router.get("/video/play-list/raw", summary="播放列表原始兼容格式")
+@with_db_connection
 def play_list_raw(
     viewer_user_id: str | None = Query(default=None, description="当前登录用户的 external_user_id，用于计算点赞、关注和播放进度"),
     drama_id: int | None = Query(default=None, description="短剧内部 ID，可选"),
@@ -27,6 +30,7 @@ def play_list_raw(
 
 
 @router.get("/video/play-list", summary="播放列表统一响应格式")
+@with_db_connection
 def play_list(
     viewer_user_id: str | None = Query(default=None, description="当前登录用户的 external_user_id，用于计算点赞、关注和播放进度"),
     drama_id: int | None = Query(default=None, description="短剧内部 ID，可选"),
@@ -53,7 +57,8 @@ def play_list(
     }
 
 
-@router.post("/admin/test-data/temp", summary="临时写入测试短剧数据")
+@router.post("/admin/test-data/temp", summary="临时写入测试短剧数据", dependencies=[Depends(require_admin)])
+@with_db_connection
 def add_temp_test_data() -> dict[str, Any]:
     """临时测试接口：向数据库写入一组可重复更新的测试短剧数据。
 
@@ -63,7 +68,8 @@ def add_temp_test_data() -> dict[str, Any]:
     return {"code": 0, "message": "success", "data": seed_temp_test_data()}
 
 
-@router.get("/admin/dramas", summary="Demo 短剧管理列表")
+@router.get("/admin/dramas", summary="Demo 短剧管理列表", dependencies=[Depends(require_admin)])
+@with_db_connection
 def admin_dramas() -> dict[str, Any]:
     """Demo 管理接口：列出短剧主数据。
 

@@ -2,14 +2,22 @@
 
 from typing import Any
 
-from fastapi import APIRouter, Body, Query
+from fastapi import APIRouter, Body, Depends, Query
 
+from app.core.security import require_path_user
+from app.db.dependencies import with_db_connection
 from app.services import user_service
 
-router = APIRouter(prefix="/api/v1", tags=["user"])
+# 所有 /user/{user_id}/* 接口均需 Bearer JWT，且路径 user_id 必须等于令牌用户
+router = APIRouter(
+    prefix="/api/v1",
+    tags=["user"],
+    dependencies=[Depends(require_path_user)],
+)
 
 
 @router.get("/user/{user_id}/profile", summary="用户信息")
+@with_db_connection
 def user_profile(user_id: str) -> dict[str, Any]:
     profile = user_service.get_user_profile(user_id)
     print("user_profile:", profile)  # 调试输出，查看返回的用户信息
@@ -19,6 +27,7 @@ def user_profile(user_id: str) -> dict[str, Any]:
 
 
 @router.get("/user/{user_id}/favorites", summary="用户收藏")
+@with_db_connection
 def user_favorites(
     user_id: str,
     page: int = Query(default=1, ge=1),
@@ -29,6 +38,7 @@ def user_favorites(
 
 
 @router.get("/user/{user_id}/history", summary="观看历史")
+@with_db_connection
 def user_history(
     user_id: str,
     page: int = Query(default=1, ge=1),
@@ -43,6 +53,7 @@ def user_history(
 
 
 @router.post("/user/{user_id}/progress", summary="保存观看进度")
+@with_db_connection
 def save_progress(
     user_id: str,
     video_id: str = Body(...),
@@ -55,6 +66,7 @@ def save_progress(
 
 
 @router.get("/user/{user_id}/progress/{drama_id}", summary="查询观看进度")
+@with_db_connection
 def get_progress(user_id: str, drama_id: str) -> dict[str, Any]:
     result = user_service.get_progress(user_id, drama_id)
     return {"code": 0, "message": "success", "data": result}
@@ -64,17 +76,19 @@ def get_progress(user_id: str, drama_id: str) -> dict[str, Any]:
 
 
 @router.post("/user/{user_id}/like", summary="点赞/取消点赞")
+@with_db_connection
 def toggle_like(
     user_id: str,
     video_id: int = Body(...),
-    is_like: bool = Body(default=False),
+    is_like: bool | None = Body(default=None, description="目标状态；不传则 toggle"),
 ) -> dict[str, Any]:
     print(f"toggle_like: user_id={user_id}, video_id={video_id}, is_like={is_like}")
-    result = user_service.toggle_like(user_id, video_id)
+    result = user_service.toggle_like(user_id, video_id, is_like)
     return {"code": 0, "message": "success", "data": result}
 
 
 @router.get("/user/{user_id}/likes/{video_id}", summary="查询点赞状态")
+@with_db_connection
 def check_liked(user_id: str, video_id: str) -> dict[str, Any]:
     result = user_service.check_liked(user_id, video_id)
     return {"code": 0, "message": "success", "data": result}
@@ -84,13 +98,14 @@ def check_liked(user_id: str, video_id: str) -> dict[str, Any]:
 
 
 @router.post("/user/{user_id}/favorite", summary="收藏/取消收藏短剧")
+@with_db_connection
 def toggle_favorite(
     user_id: str,
     video_id: int = Body(...),
-    is_favorite: bool = Body(default=False),
+    is_favorite: bool | None = Body(default=None, description="目标状态；不传则 toggle"),
 ) -> dict[str, Any]:
-    """收藏或取消收藏短剧（toggle），返回最新状态和追剧数。"""
-    result = user_service.toggle_favorite(user_id, video_id)
+    """收藏或取消收藏短剧（传 is_favorite 时幂等设置，否则 toggle），返回最新状态和追剧数。"""
+    result = user_service.toggle_favorite(user_id, video_id, is_favorite)
     return {"code": 0, "message": "success", "data": result}
 
 
@@ -98,6 +113,7 @@ def toggle_favorite(
 
 
 @router.post("/user/{user_id}/share", summary="记录分享")
+@with_db_connection
 def share_episode(
     user_id: str,
     video_id: int = Body(...),
