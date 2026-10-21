@@ -45,11 +45,16 @@ def verify_google_id_token(id_token: str) -> dict[str, Any]:
             settings.google_web_client_id,
             clock_skew_in_seconds=GOOGLE_CLOCK_SKEW_SECONDS,
         )
+        print(claims)
     except google_exceptions.TransportError as exc:
         # 拉取 Google 公钥失败（网络问题），不是令牌本身无效
         raise AuthConfigurationError("cannot fetch google certs") from exc
     except (ValueError, google_exceptions.GoogleAuthError) as exc:
         # ValueError：签名/aud/exp 等校验失败；GoogleAuthError：issuer 错误
+        raise InvalidGoogleTokenError("invalid google token") from exc
+    except Exception as exc:
+        # 捕获其他未知异常，避免泄露敏感信息
+        print("Unexpected error during Google ID token verification:", exc)
         raise InvalidGoogleTokenError("invalid google token") from exc
 
     issuer = claims.get("iss")
@@ -66,8 +71,9 @@ def verify_google_id_token(id_token: str) -> dict[str, Any]:
 
 
 def login_with_google(id_token: str, android_id: str | None = None) -> dict[str, Any]:
+    print(id_token)
     claims = verify_google_id_token(id_token)
-    # Never log id_token or full claims (PII / token material).
+    print("Google ID Token Claims:", claims)
     db = initialize_database()
     with db.atomic():
         user = _upsert_google_user(claims)
