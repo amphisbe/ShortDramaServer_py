@@ -37,6 +37,9 @@ class User(BaseModel):
     id = BigAutoField()
     external_user_id = CharField(max_length=24, unique=True, index=True)
     google_sub = CharField(max_length=128, null=True, unique=True, index=True)
+    # Device fingerprint (Android Settings.Secure.ANDROID_ID). Bound on Google login.
+    # Unique + nullable: multiple unbound users may have NULL; one device maps to one user.
+    android_id = CharField(max_length=64, null=True, unique=True, index=True)
     email = CharField(max_length=255, default="")
     email_verified = BooleanField(default=False)
     nickname = CharField(max_length=100, default="")

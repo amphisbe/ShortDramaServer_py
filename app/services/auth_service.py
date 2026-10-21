@@ -30,6 +30,10 @@ class InvalidGoogleTokenError(Exception):
     """Raised when Google ID token verification fails."""
 
 
+class InvalidDeviceAuthError(Exception):
+    """Raised when device auth request is invalid."""
+
+
 def verify_google_id_token(id_token: str) -> dict[str, Any]:
     if not settings.google_web_client_id:
         raise AuthConfigurationError("GOOGLE_WEB_CLIENT_ID is not configured")
@@ -61,17 +65,92 @@ def verify_google_id_token(id_token: str) -> dict[str, Any]:
     return claims
 
 
-def login_with_google(id_token: str) -> dict[str, Any]:
+def login_with_google(id_token: str, android_id: str | None = None) -> dict[str, Any]:
     claims = verify_google_id_token(id_token)
-    print("Google ID Token Claims:", claims)
+    # Never log id_token or full claims (PII / token material).
     db = initialize_database()
     with db.atomic():
         user = _upsert_google_user(claims)
+        if android_id:
+            _bind_android_id(user, android_id)
         token = _create_backend_token(user)
         return {
             "token": token,
             "user": _format_auth_user(user),
         }
+
+
+def login_with_device(android_id: str) -> dict[str, Any]:
+    """Lookup user by android_id.
+
+    android_id is only bound after a successful Google login, so a hit implies
+    the device already completed Google bind. No pre-bind device-only rows.
+    """
+    cleaned = (android_id or "").strip()
+    if not cleaned:
+        raise InvalidDeviceAuthError("android_id is required")
+
+    initialize_database()
+    user = User.get_or_none(User.android_id == cleaned)
+    if user is None:
+        return {
+            "registered": False,
+            "google_bound": False,
+            "token": None,
+            "user": None,
+        }
+
+    google_bound = bool(user.google_sub)
+    if not google_bound:
+        # Rare under bind-on-Google policy; treat as incomplete registration.
+        return {
+            "registered": True,
+            "google_bound": False,
+            "token": None,
+            "user": {
+                "userId": user.external_user_id,
+                "nickname": user.nickname,
+                "avatarUrl": user.avatar_url,
+                "email": user.email,
+                "emailVerified": bool(user.email_verified),
+            },
+        }
+
+    user.last_login_at = _utcnow()
+    user.save()
+    token = _create_backend_token(user)
+    return {
+        "registered": True,
+        "google_bound": True,
+        "token": token,
+        "user": _format_auth_user(user),
+    }
+
+
+def _bind_android_id(user: User, android_id: str) -> None:
+    """Bind android_id to the Google-authenticated user.
+
+    Conflict policy (anti-brush: google_sub is primary, android_id is auxiliary):
+    if another user already owns this android_id, move the bind to the current
+    Google user and clear it from the previous user so the device follows the
+    Google account being logged in.
+    """
+    cleaned = (android_id or "").strip()
+    if not cleaned:
+        return
+
+    previous = (
+        User.select()
+        .where((User.android_id == cleaned) & (User.id != user.id))
+        .first()
+    )
+    if previous is not None:
+        previous.android_id = None
+        previous.save()
+
+    if user.android_id != cleaned:
+        user.android_id = cleaned
+        user.save()
 
 
 def _upsert_google_user(claims: dict[str, Any]) -> User:

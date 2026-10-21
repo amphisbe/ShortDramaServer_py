@@ -156,6 +156,7 @@ def _migrate_users() -> None:
     if settings.db_driver == "mysql":
         col_defs = {
             "google_sub": "VARCHAR(128) NULL",
+            "android_id": "VARCHAR(64) NULL",
             "email": "VARCHAR(255) NOT NULL DEFAULT ''",
             "email_verified": "TINYINT(1) NOT NULL DEFAULT 0",
             "last_login_at": "DATETIME NULL",
@@ -164,6 +165,7 @@ def _migrate_users() -> None:
     else:
         col_defs = {
             "google_sub": "VARCHAR(128)",
+            "android_id": "VARCHAR(64)",
             "email": "VARCHAR(255) NOT NULL DEFAULT ''",
             "email_verified": "INTEGER NOT NULL DEFAULT 0",
             "last_login_at": "DATETIME",
@@ -178,6 +180,7 @@ def _migrate_users() -> None:
         logger.info("Added missing users.%s column", col_name)
 
     _ensure_users_google_sub_index()
+    _ensure_users_android_id_index()
 
 
 def _ensure_users_google_sub_index() -> None:
@@ -192,6 +195,20 @@ def _ensure_users_google_sub_index() -> None:
         return
     database_proxy.execute_sql(f"CREATE UNIQUE INDEX {index_name} ON users (google_sub)")
     logger.info("Created users.google_sub unique index")
+
+
+def _ensure_users_android_id_index() -> None:
+    try:
+        existing_indexes = {idx.name for idx in database_proxy.get_indexes("users")}
+    except Exception as exc:
+        logger.warning("Failed to inspect users indexes: %s", exc)
+        return
+
+    index_name = "idx_users_android_id_unique"
+    if index_name in existing_indexes:
+        return
+    database_proxy.execute_sql(f"CREATE UNIQUE INDEX {index_name} ON users (android_id)")
+    logger.info("Created users.android_id unique index")
 
 
 def _migrate_dramas() -> None:
